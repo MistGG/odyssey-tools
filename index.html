@@ -5,117 +5,515 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DMO Tour Tracker</title>
     <style>
-        :root { --bg: #0f0f0f; --card: #1a1a1a; --primary: #00d4ff; --active: #00ff88; --text: #e0e0e0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .container { width: 100%; max-width: 500px; }
-        h2 { border-bottom: 2px solid #333; padding-bottom: 10px; color: var(--primary); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
-        .server-time { text-align: center; font-size: 1.5rem; margin-bottom: 30px; font-weight: bold; background: #222; padding: 10px; border-radius: 8px; border: 1px solid #333; }
-        .section { margin-bottom: 40px; }
-        .boss-card { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; margin-bottom: 10px; background: var(--card); border-radius: 10px; border-left: 4px solid #444; transition: all 0.3s ease; }
-        .boss-card.upcoming { border-left-color: var(--primary); background: #1e262b; }
-        .boss-card.active { border-left-color: var(--active); background: #1a2b22; transform: scale(1.02); }
+        :root { 
+            --bg: #0a0a0c; 
+            --card: #151518; 
+            --primary: #00d4ff; 
+            --active: #00ff88; 
+            --text: #e0e0e0; 
+            --text-dim: #888;
+            --spiral: #9d00ff; 
+            --forest: #2ecc71; 
+            --accent: #ffcc00;
+            --danger: #ff4757;
+            --border: #222;
+            --overlay: rgba(0, 0, 0, 0.85);
+            --event: #ff9f43;
+        }
+
+        [data-theme="light"] {
+            --bg: #f4f7f9;
+            --card: #ffffff;
+            --primary: #0088cc;
+            --active: #27ae60;
+            --text: #2c3e50;
+            --text-dim: #7f8c8d;
+            --border: #dcdde1;
+            --overlay: rgba(255, 255, 255, 0.95);
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            display: flex; 
+            justify-content: center; 
+            padding: 20px; 
+            margin: 0; 
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        .container { width: 100%; max-width: 450px; position: relative; }
+
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            background: var(--card);
+            border: 1px solid var(--border);
+        }
+
+        .icon-btn:hover { color: var(--primary); border-color: var(--primary); }
+        .icon-btn svg { width: 20px; height: 20px; fill: currentColor; }
+        
+        h2 { 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 8px; 
+            color: var(--primary); 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            margin: 20px 0 15px 0; 
+            display: flex;
+            align-items: center;
+        }
+        
+        h2::before { content: '◈'; margin-right: 8px; font-size: 0.7rem; }
+
+        .server-time { 
+            text-align: center; 
+            font-size: 1.8rem; 
+            margin-bottom: 10px; 
+            font-weight: 900; 
+            background: var(--card);
+            padding: 15px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border); 
+            color: var(--text); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            font-family: 'Courier New', monospace;
+        }
+
+        .utc-label { font-size: 0.7rem; color: var(--text-dim); display: block; margin-top: -5px; letter-spacing: 3px; }
+
+        .boss-card { 
+            position: relative; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 16px; 
+            margin-bottom: 12px; 
+            background: var(--card); 
+            border-radius: 10px; 
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--text-dim); 
+            transition: transform 0.2s ease;
+        }
+
+        .tour-label { 
+            font-size: 0.6rem; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            padding: 2px 8px; 
+            border-radius: 20px; 
+            margin-bottom: 6px; 
+            display: inline-block; 
+            letter-spacing: 1px; 
+        }
+        .label-spiral { background: rgba(157, 0, 255, 0.15); color: #9d00ff; border: 1px solid var(--spiral); }
+        .label-forest { background: rgba(46, 204, 113, 0.15); color: #27ae60; border: 1px solid var(--forest); }
+        .label-event { background: rgba(255, 159, 67, 0.15); color: var(--event); border: 1px solid var(--event); }
+
+        .boss-card.upcoming { border-left-color: var(--primary); background: var(--card); border-color: var(--primary); }
+        .boss-card.active { 
+            border-left-color: var(--active); 
+            background: var(--card); 
+            border-color: var(--active);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+        }
+
+        .boss-card.event-active {
+            border-left-color: var(--event);
+            border-color: var(--event);
+            background: rgba(255, 159, 67, 0.05);
+        }
+        
         .boss-info { line-height: 1.4; }
-        .boss-name { font-weight: 800; font-size: 1.1rem; }
-        .boss-map { font-size: 0.8rem; color: #888; }
-        .boss-buff { font-size: 0.85rem; color: #ffcc00; font-weight: bold; }
-        .timer { font-family: 'Monaco', monospace; font-size: 1.3rem; color: var(--primary); font-weight: bold; }
-        .empty-msg { color: #555; font-style: italic; text-align: center; padding: 10px; }
+        .boss-name { font-weight: 800; font-size: 1.15rem; color: var(--text); }
+        .boss-map { font-size: 0.8rem; color: var(--text-dim); }
+        .boss-buff { font-size: 0.85rem; color: var(--accent); font-weight: bold; }
+        
+        .timer { 
+            font-family: 'Consolas', 'Monaco', monospace; 
+            font-size: 1.4rem; 
+            color: var(--primary); 
+            font-weight: bold; 
+            min-width: 90px; 
+            text-align: right; 
+        }
+        
+        .active .timer { color: var(--active); }
+        .active .timer::after { content: ' LIVE'; font-size: 0.5rem; display: block; margin-top: -5px; }
+
+        .event-active .timer { color: var(--event); }
+        .event-active .timer::after { content: ' OPEN'; font-size: 0.5rem; display: block; margin-top: -5px; }
+
+        .empty-msg { color: var(--text-dim); font-style: italic; text-align: center; padding: 20px; font-size: 0.9rem; border: 1px dashed var(--border); border-radius: 10px; }
+
+        /* Settings Modal */
+        #settingsOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .settings-modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .settings-header h3 { margin: 0; color: var(--primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        .close-btn { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 1.5rem; }
+
+        .setting-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .setting-group label { cursor: pointer; flex-grow: 1; font-weight: 500; }
+
+        .lead-time-input {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 10px;
+            border-radius: 6px;
+            width: 60px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .test-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            width: 100%;
+            margin-top: 15px;
+            font-weight: bold;
+            transition: filter 0.2s;
+        }
+
+        .test-btn:hover { filter: brightness(1.1); }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
 <div class="container">
-    <div class="server-time" id="serverTime">UTC 00:00:00</div>
+    <div class="top-nav">
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">
+            <svg id="themeIcon" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+        </button>
+        <button class="icon-btn" onclick="openSettings()" title="Settings">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        </button>
+    </div>
+
+    <div class="server-time">
+        <span id="serverTime">00:00:00</span>
+        <span class="utc-label">SERVER UTC</span>
+    </div>
+
+    <div class="section" id="liveSection" style="display:none;">
+        <h2 style="color:var(--active);">🔥 Live Tours</h2>
+        <div id="liveList"></div>
+    </div>
 
     <div class="section">
-        <h2>🔔 Upcoming Tours ( < 15m )</h2>
+        <h2 style="color:var(--event);">🌟 Special Event</h2>
+        <div id="eventList"></div>
+    </div>
+
+    <div class="section">
+        <h2>🔔 Upcoming Tours</h2>
         <div id="upcomingList"></div>
     </div>
 
     <div class="section">
-        <h2>🗺️ All Tours</h2>
+        <h2>🗺️ Full Schedule</h2>
         <div id="fullList"></div>
     </div>
 </div>
 
-<script>
-    const tours = [
-        // Spiral Mountain - Every 1 Hour (6m offsets)
-        { name: "Shellmon", map: "Forest of Beginning", buff: "SK Buff", type: "hourly", offset: 0 },
-        { name: "Gerbemon", map: "Forest of Marionette", buff: "TA Buff", type: "hourly", offset: 6 },
-        { name: "Megadramon", map: "Metal Empire", buff: "AA Buff", type: "hourly", offset: 12 },
-        { name: "LadyDevimon", map: "Nightmare Top", buff: "SUP Buff", type: "hourly", offset: 18 },
+<div id="settingsOverlay" onclick="closeSettings(event)">
+    <div class="settings-modal" onclick="event.stopPropagation()">
+        <div class="settings-header">
+            <h3>Notification Settings</h3>
+            <button class="close-btn" onclick="document.getElementById('settingsOverlay').style.display='none'">&times;</button>
+        </div>
         
-        // Forest Tour - Every 1.5 Hours (90 mins)
-        // Ref: 19:35 UTC is a known spawn time
-        { name: "Orochimon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1175 } // 1175 is 19:35 in minutes from 00:00
+        <div class="setting-group">
+            <label for="notifySpiral">Spiral Tour (Shellmon Only)</label>
+            <input type="checkbox" id="notifySpiral">
+        </div>
+
+        <div class="setting-group">
+            <label for="notifyForest">Forest Tour (Orochimon)</label>
+            <input type="checkbox" id="notifyForest">
+        </div>
+
+        <div class="setting-group" style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+            <label>Notify me (minutes before):</label>
+            <input type="number" id="leadTime" class="lead-time-input" value="1" min="1" max="15">
+        </div>
+
+        <button class="test-btn" onclick="playBeep()">Test Beep Sound</button>
+    </div>
+</div>
+
+<script>
+    // Configuration
+    const tours = [
+        { id: 'shellmon', name: "Shellmon", map: "Forest of Beginning", buff: "SK Buff", type: "hourly", offset: 0, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral" },
+        { id: 'gerbemon', name: "Gerbemon", map: "Forest of Marionette", buff: "TA Buff", type: "hourly", offset: 6, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral" },
+        { id: 'megadramon', name: "Megadramon", map: "Metal Empire", buff: "AA Buff", type: "hourly", offset: 12, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral" },
+        { id: 'ladydevimon', name: "LadyDevimon", map: "Nightmare Top", buff: "SUP Buff", type: "hourly", offset: 18, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral" },
+        
+        { id: 'orochimon', name: "Orochimon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1175, liveDuration: 120, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'mugendramon', name: "Mugendramon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1177, liveDuration: 120, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'chaosdramon', name: "Chaosdramon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1179, liveDuration: 120, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'banchouleomon', name: "BanchouLeomon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1181, liveDuration: 120, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'beelzebumon', name: "Beelzebumon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1183, liveDuration: 120, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'megidramon', name: "Megidramon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1185, liveDuration: 120, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'zhuqiaomon', name: "Zhuqiaomon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1187, liveDuration: 120, label: "Forest Tour", lClass: "label-forest" }
     ];
+
+    const specialEvents = [
+        { id: 'ogpass', name: "OG Pass", map: "Special Event", buff: "Collection Box", type: "interval", interval: 120, refMinute: 1200, liveDuration: 1800, label: "Special Event", lClass: "label-event" }
+    ];
+
+    // Audio
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime); 
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+    }
+
+    function openSettings() { document.getElementById('settingsOverlay').style.display = 'flex'; }
+    function closeSettings(e) { if (e.target.id === 'settingsOverlay') e.target.style.display = 'none'; }
+
+    function toggleTheme() {
+        const body = document.body;
+        const currentTheme = body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('dmo_tour_theme', newTheme);
+        updateThemeIcon(newTheme);
+    }
+
+    function updateThemeIcon(theme) {
+        const icon = document.getElementById('themeIcon');
+        if (theme === 'light') {
+            icon.innerHTML = '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>';
+        } else {
+            icon.innerHTML = '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>';
+        }
+    }
+
+    function saveSettings() {
+        const settings = {
+            spiral: document.getElementById('notifySpiral').checked,
+            forest: document.getElementById('notifyForest').checked,
+            leadTime: parseInt(document.getElementById('leadTime').value) || 1
+        };
+        localStorage.setItem('dmo_tour_settings', JSON.stringify(settings));
+    }
+
+    function loadData() {
+        const savedSettings = localStorage.getItem('dmo_tour_settings');
+        if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            document.getElementById('notifySpiral').checked = settings.spiral;
+            document.getElementById('notifyForest').checked = settings.forest;
+            document.getElementById('leadTime').value = settings.leadTime;
+        }
+        const savedTheme = localStorage.getItem('dmo_tour_theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+    }
+
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('change', saveSettings);
+    });
 
     function getNextSpawn(tour) {
         const now = new Date();
-        const nowInMinutes = (now.getUTCHours() * 60) + now.getUTCMinutes();
-        const nowInSeconds = (nowInMinutes * 60) + now.getUTCSeconds();
-
-        let nextSpawnSeconds = 0;
+        const nowTotalSec = (now.getUTCHours() * 3600) + (now.getUTCMinutes() * 60) + now.getUTCSeconds();
 
         if (tour.type === "hourly") {
-            let targetMinutes = tour.offset;
-            if (nowInMinutes >= targetMinutes && now.getUTCSeconds() > 0) {
-                nextSpawnSeconds = (targetMinutes + 60) * 60;
-            } else {
-                nextSpawnSeconds = targetMinutes * 60;
-            }
-            // Logic to handle daily wrap around for hourly
-            if (nextSpawnSeconds <= nowInSeconds) nextSpawnSeconds += 3600;
+            const offsetSec = tour.offset * 60;
+            const currentHourStartSec = now.getUTCHours() * 3600;
+            let targetSec = currentHourStartSec + offsetSec;
+            if (nowTotalSec >= targetSec) targetSec += 3600;
+            return (targetSec - nowTotalSec + 86400) % 86400;
         } 
-        else if (tour.type === "interval") {
+        
+        if (tour.type === "interval") {
             const intervalSec = tour.interval * 60;
-            const refSec = tour.refMinute * 60;
-            
-            // Calculate how many intervals since the reference time
-            let diff = nowInSeconds - refSec;
-            let intervalsPassed = Math.ceil(diff / intervalSec);
-            nextSpawnSeconds = refSec + (intervalsPassed * intervalSec);
-            
-            // Handle day wrap around (modulo 24h)
-            const daySec = 86400;
-            while (nextSpawnSeconds <= nowInSeconds) {
-                nextSpawnSeconds += intervalSec;
-            }
-            nextSpawnSeconds = nextSpawnSeconds % daySec;
-            if (nextSpawnSeconds < 0) nextSpawnSeconds += daySec;
+            const refSec = (tour.refMinute * 60) % 86400;
+            let diff = nowTotalSec - refSec;
+            let intervalsCount = Math.ceil(diff / intervalSec);
+            let nextSec = refSec + (intervalsCount * intervalSec);
+            while (nextSec <= nowTotalSec) nextSec += intervalSec;
+            return (nextSec - nowTotalSec + 86400) % 86400;
         }
-
-        let totalDiffSeconds = nextSpawnSeconds - nowInSeconds;
-        if (totalDiffSeconds < 0) totalDiffSeconds += 86400;
-
-        return totalDiffSeconds;
     }
 
     function formatTime(seconds) {
-        const m = Math.floor(seconds / 60);
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
         const s = seconds % 60;
-        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        let timeStr = "";
+        if (h > 0) timeStr += h + ":";
+        timeStr += String(m).padStart(2, '0') + ":" + String(s).padStart(2, '0');
+        return timeStr;
     }
 
     function update() {
         const now = new Date();
-        document.getElementById('serverTime').innerText = `UTC ${now.toUTCString().split(' ')[4]}`;
+        document.getElementById('serverTime').innerText = now.toUTCString().split(' ')[4];
 
+        const settings = {
+            spiral: document.getElementById('notifySpiral').checked,
+            forest: document.getElementById('notifyForest').checked,
+            leadSec: (parseInt(document.getElementById('leadTime').value) || 1) * 60
+        };
+
+        const processItems = (itemList) => itemList.map(t => {
+            const timeLeft = getNextSpawn(t);
+            const interval = t.type === 'hourly' ? 3600 : t.interval * 60;
+            const timeSinceLastSpawn = (interval - timeLeft) % interval;
+            const isLive = timeSinceLastSpawn < t.liveDuration;
+            return { ...t, timeLeft, isLive };
+        });
+
+        const tourData = processItems(tours);
+        const eventData = processItems(specialEvents);
+
+        let liveHtml = "";
         let upcomingHtml = "";
+        let eventHtml = "";
         let fullHtml = "";
 
-        // Sort tours by which is coming sooner
-        const sortedTours = tours.map(t => ({ ...t, timeLeft: getNextSpawn(t) }))
-                                 .sort((a, b) => a.timeLeft - b.timeLeft);
+        // Sort for Full Schedule (Live at bottom)
+        const sortedForFull = [...tourData].sort((a, b) => {
+            if (a.isLive && !b.isLive) return 1;
+            if (!a.isLive && b.isLive) return -1;
+            return a.timeLeft - b.timeLeft;
+        });
 
-        sortedTours.forEach(tour => {
-            const isUpcoming = tour.timeLeft < 900; // 15 minutes
-            const isActive = tour.timeLeft < 60;   // 1 minute (spawning now)
-            
-            const cardHtml = `
-                <div class="boss-card ${isActive ? 'active' : (isUpcoming ? 'upcoming' : '')}">
+        // Filter for Live Section
+        tourData.forEach(tour => {
+            if (tour.isLive) {
+                liveHtml += `
+                    <div class="boss-card active">
+                        <div class="boss-info">
+                            <span class="tour-label ${tour.lClass}">${tour.label}</span>
+                            <div class="boss-name">${tour.name}</div>
+                            <div class="boss-map">${tour.map}</div>
+                            <div class="boss-buff">${tour.buff}</div>
+                        </div>
+                        <div class="timer">${formatTime(tour.timeLeft)}</div>
+                    </div>
+                `;
+            } else if (tour.timeLeft < 900) {
+                upcomingHtml += `
+                    <div class="boss-card upcoming">
+                        <div class="boss-info">
+                            <span class="tour-label ${tour.lClass}">${tour.label}</span>
+                            <div class="boss-name">${tour.name}</div>
+                            <div class="boss-map">${tour.map}</div>
+                            <div class="boss-buff">${tour.buff}</div>
+                        </div>
+                        <div class="timer">${formatTime(tour.timeLeft)}</div>
+                    </div>
+                `;
+            }
+
+            // Notifications
+            if (tour.timeLeft === settings.leadSec) {
+                if (tour.id === 'shellmon' && settings.spiral) playBeep();
+                if (tour.id === 'orochimon' && settings.forest) playBeep();
+            }
+        });
+
+        // Event List
+        eventData.forEach(event => {
+            eventHtml += `
+                <div class="boss-card ${event.isLive ? 'event-active' : ''}">
                     <div class="boss-info">
+                        <span class="tour-label ${event.lClass}">${event.label}</span>
+                        <div class="boss-name">${event.name}</div>
+                        <div class="boss-map">${event.map}</div>
+                        <div class="boss-buff">${event.isLive ? 'Window Open' : event.buff}</div>
+                    </div>
+                    <div class="timer">${formatTime(event.timeLeft)}</div>
+                </div>
+            `;
+        });
+
+        // Full Schedule
+        sortedForFull.forEach(tour => {
+            fullHtml += `
+                <div class="boss-card ${tour.isLive ? 'active' : ''}">
+                    <div class="boss-info">
+                        <span class="tour-label ${tour.lClass}">${tour.label}</span>
                         <div class="boss-name">${tour.name}</div>
                         <div class="boss-map">${tour.map}</div>
                         <div class="boss-buff">${tour.buff}</div>
@@ -123,17 +521,20 @@
                     <div class="timer">${formatTime(tour.timeLeft)}</div>
                 </div>
             `;
-
-            if (isUpcoming) upcomingHtml += cardHtml;
-            fullHtml += cardHtml;
         });
 
+        document.getElementById('liveSection').style.display = liveHtml ? 'block' : 'none';
+        document.getElementById('liveList').innerHTML = liveHtml;
+        document.getElementById('eventList').innerHTML = eventHtml;
         document.getElementById('upcomingList').innerHTML = upcomingHtml || '<div class="empty-msg">No tours starting soon...</div>';
         document.getElementById('fullList').innerHTML = fullHtml;
     }
 
-    setInterval(update, 1000);
-    update();
+    window.onload = () => {
+        loadData();
+        setInterval(update, 1000);
+        update();
+    };
 </script>
 
 </body>
