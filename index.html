@@ -16,6 +16,7 @@
             --text-dim: #888;
             --spiral: #9d00ff; 
             --forest: #2ecc71; 
+            --tokyo: #ff2e71;
             --accent: #ffcc00;
             --danger: #ff4757;
             --border: #222;
@@ -255,6 +256,7 @@
         }
         .label-spiral { background: rgba(157, 0, 255, 0.15); color: #9d00ff; border: 1px solid var(--spiral); }
         .label-forest { background: rgba(46, 204, 113, 0.15); color: #27ae60; border: 1px solid var(--forest); }
+        .label-tokyo { background: rgba(255, 46, 113, 0.15); color: #ff2e71; border: 1px solid var(--tokyo); }
         .label-event { background: rgba(255, 159, 67, 0.15); color: var(--event); border: 1px solid var(--event); }
 
         .boss-card.upcoming { border-left-color: var(--primary); background: var(--card); border-color: var(--primary); }
@@ -482,6 +484,10 @@
             <input type="checkbox" id="notifyForest">
         </div>
         <div class="setting-group">
+            <label for="notifyTokyo">Tokyo Tour Start</label>
+            <input type="checkbox" id="notifyTokyo">
+        </div>
+        <div class="setting-group">
             <label for="notifyEvent">Special Event</label>
             <input type="checkbox" id="notifyEvent">
         </div>
@@ -510,14 +516,26 @@
         { id: 'ladydevimon', name: "LadyDevimon", map: "Nightmare Top", buff: "SUP Buff", type: "hourly", offset: 18, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral" },
         
         // FOREST TOURS (1.5h Interval, 2m staggered, 1m 40s live)
-        { id: 'orochimon', name: "Orochimon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1175, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
-        { id: 'mugendramon', name: "Mugendramon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1177, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
-        { id: 'chaosdramon', name: "Chaosdramon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1179, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
-        { id: 'banchouleomon', name: "BanchouLeomon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1181, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
-        { id: 'beelzebumon_1', name: "Beelzebumon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1183, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
-        { id: 'megidramon', name: "Megidramon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1185, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
-        { id: 'beelzebumon_2', name: "Beelzebumon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1187, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
-        { id: 'zhuqiaomon', name: "Zhuqiaomon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1189, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" }
+        { id: 'orochimon', name: "Orochimon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1175, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'mugendramon', name: "Mugendramon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1177, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'chaosdramon', name: "Chaosdramon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1179, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'banchouleomon', name: "BanchouLeomon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1181, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'beelzebumon_1', name: "Beelzebumon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1183, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'megidramon', name: "Megidramon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1185, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'beelzebumon_2', name: "Beelzebumon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1187, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
+        { id: 'zhuqiaomon', name: "Zhuqiaomon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1189, liveDuration: 100, label: "Forest Tour", lClass: "label-forest" },
+
+        // TOKYO TOURS (1.5h Interval, sequential 3m windows, starts 22:56 UTC)
+        // 22:56 = 1376 mins
+        { id: 'tokyo_myotismon_1', name: "Myotismon", map: "[[Big Sight]]", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1376, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard' },
+        { id: 'tokyo_darktyrannomon', name: "DarkTyrannomon", map: "[[Big Sight]]", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1379, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'reverse' },
+        { id: 'tokyo_groundramon', name: "Groundramon and Okuwamon", map: "[[Odaiba]]", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1382, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard' },
+        { id: 'tokyo_myotismon_2', name: "Myotismon", map: "[[Minato City]]", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1385, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard' },
+        { id: 'tokyo_myotismon_3', name: "Myotismon", map: "[[Shibuya]]", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1388, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard' },
+        { id: 'tokyo_phantomon', name: "Phantomon", map: "[[Shibuya]]", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1391, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'reverse' },
+        { id: 'tokyo_raremon', name: "Raremon", map: "[[Shibuya]]", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1394, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard' },
+        { id: 'tokyo_mammothmon', name: "Mammothmon", map: "[[Valley of Light]]", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1397, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard' },
+        { id: 'tokyo_aquilamon', name: "Aquilamon", map: "[[Valley of Light]]", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1400, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'reverse' }
     ];
 
     const specialEvents = [
@@ -542,21 +560,15 @@
         if (audioCtx.state === 'suspended') audioCtx.resume();
         
         const startTime = audioCtx.currentTime;
-        // Play 3 pulses with 0.2s spacing
         [0, 0.2, 0.4].forEach(delay => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            
-            // 'square' is buzzier and more aggressive than 'sine'
             osc.type = 'square'; 
             osc.frequency.setValueAtTime(880, startTime + delay); 
-            
-            // Sharper volume envelope
             gain.gain.setValueAtTime(0.2, startTime + delay);
             gain.gain.exponentialRampToValueAtTime(0.01, startTime + delay + 0.15);
-            
             osc.start(startTime + delay);
             osc.stop(startTime + delay + 0.15);
         });
@@ -583,6 +595,7 @@
         const settings = {
             spiral: document.getElementById('notifySpiral').checked,
             forest: document.getElementById('notifyForest').checked,
+            tokyo: document.getElementById('notifyTokyo').checked,
             event: document.getElementById('notifyEvent').checked,
             leadTime: parseInt(document.getElementById('leadTime').value) || 1,
             wakeLock: document.getElementById('wakeLock').checked
@@ -597,6 +610,7 @@
             const s = JSON.parse(savedSettings);
             document.getElementById('notifySpiral').checked = s.spiral;
             document.getElementById('notifyForest').checked = s.forest;
+            if(document.getElementById('notifyTokyo')) document.getElementById('notifyTokyo').checked = !!s.tokyo;
             document.getElementById('notifyEvent').checked = !!s.event;
             document.getElementById('leadTime').value = s.leadTime;
             document.getElementById('wakeLock').checked = !!s.wakeLock;
@@ -650,16 +664,21 @@
             const isLive = timeSinceLastSpawn < t.liveDuration;
             
             let channel = null;
-            if (isLive && t.label === 'Spiral Tour') {
-                // Segment 1: CH 0 (0-100s) then Swap (100-120s)
-                if (timeSinceLastSpawn < 100) channel = "ch 0";
-                else if (timeSinceLastSpawn < 120) channel = "Swap to Ch 1";
-                // Segment 2: CH 1 (120-220s) then Swap (220-240s)
-                else if (timeSinceLastSpawn < 220) channel = "ch 1";
-                else if (timeSinceLastSpawn < 240) channel = "Swap to Ch 2";
-                // Segment 3: CH 2 (240-340s) then Swap/Finished (340-360s)
-                else if (timeSinceLastSpawn < 340) channel = "ch 2";
-                else channel = "Finished";
+            if (isLive) {
+                if (t.label === 'Spiral Tour') {
+                    if (timeSinceLastSpawn < 100) channel = "ch 0";
+                    else if (timeSinceLastSpawn < 120) channel = "Swap to Ch 1";
+                    else if (timeSinceLastSpawn < 220) channel = "ch 1";
+                    else if (timeSinceLastSpawn < 240) channel = "Swap to Ch 2";
+                    else if (timeSinceLastSpawn < 340) channel = "ch 2";
+                    else channel = "Finished";
+                } else if (t.label === 'Tokyo Tour') {
+                    const elapsed = timeSinceLastSpawn;
+                    const seq = t.rotation === 'reverse' ? ["ch 2", "ch 1", "ch 0"] : ["ch 0", "ch 1", "ch 2"];
+                    if (elapsed < 60) channel = seq[0];
+                    else if (elapsed < 120) channel = seq[1];
+                    else channel = seq[2];
+                }
             }
 
             return { ...t, timeLeft, isLive, liveRemaining: isLive ? (t.liveDuration - timeSinceLastSpawn) : 0, channel };
@@ -681,6 +700,7 @@
         tourData.forEach(t => {
             checkNotify(t, lastToursData, 'notifySpiral', 'shellmon');
             checkNotify(t, lastToursData, 'notifyForest', 'orochimon');
+            checkNotify(t, lastToursData, 'notifyTokyo', 'tokyo_myotismon_1');
         });
         eventData.forEach(e => checkNotify(e, lastEventData, 'notifyEvent'));
 
@@ -713,11 +733,8 @@
         };
 
         tourData.forEach(t => {
-            if (t.isLive) {
-                liveHtml += renderCard(t);
-            } else if (t.timeLeft < 900) {
-                upcomingHtml += renderCard(t);
-            }
+            if (t.isLive) liveHtml += renderCard(t);
+            else if (t.timeLeft < 900) upcomingHtml += renderCard(t);
         });
 
         eventData.forEach(e => eventHtml += renderCard(e, 'event-active'));
@@ -729,16 +746,12 @@
 
         const lSec = document.getElementById('liveSection');
         if(lSec) lSec.style.display = liveHtml ? 'block' : 'none';
-        
         const lList = document.getElementById('liveList');
         if(lList) lList.innerHTML = liveHtml;
-        
         const eList = document.getElementById('eventList');
         if(eList) eList.innerHTML = eventHtml;
-        
         const uList = document.getElementById('upcomingList');
         if(uList) uList.innerHTML = upcomingHtml || '<div class="empty-msg">No tours starting soon...</div>';
-        
         const fList = document.getElementById('fullList');
         if(fList) fList.innerHTML = fullHtml;
     }
