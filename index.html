@@ -266,16 +266,43 @@
         .boss-map { font-size: 0.8rem; color: var(--text-dim); }
         .boss-buff { font-size: 0.85rem; color: var(--accent); font-weight: bold; }
         
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            min-width: 90px;
+        }
+
         .timer { 
             font-family: 'Consolas', 'Monaco', monospace; 
             font-size: 1.4rem; 
             color: var(--primary); 
             font-weight: bold; 
-            min-width: 90px; 
             text-align: right; 
         }
         .active .timer::after { content: ' LIVE'; font-size: 0.5rem; display: block; margin-top: -5px; }
         .event-active .timer::after { content: ' OPEN'; font-size: 0.5rem; display: block; margin-top: -5px; }
+
+        .channel-indicator {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 900;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+            padding: 2px 6px;
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.8; transform: scale(1); }
+        }
 
         .empty-msg { color: var(--text-dim); font-style: italic; text-align: center; padding: 20px; font-size: 0.9rem; border: 1px dashed var(--border); border-radius: 10px; }
 
@@ -462,11 +489,13 @@
 <script>
     // Configuration
     const tours = [
-        { id: 'shellmon', name: "Shellmon", map: "Forest of Beginning", buff: "SK Buff", type: "hourly", offset: 0, liveDuration: 345, label: "Spiral Tour", lClass: "label-spiral" },
-        { id: 'gerbemon', name: "Gerbemon", map: "Forest of Marionette", buff: "TA Buff", type: "hourly", offset: 6, liveDuration: 345, label: "Spiral Tour", lClass: "label-spiral" },
-        { id: 'megadramon', name: "Megadramon", map: "Metal Empire", buff: "AA Buff", type: "hourly", offset: 12, liveDuration: 345, label: "Spiral Tour", lClass: "label-spiral" },
-        { id: 'ladydevimon', name: "LadyDevimon", map: "Nightmare Top", buff: "SUP Buff", type: "hourly", offset: 18, liveDuration: 345, label: "Spiral Tour", lClass: "label-spiral" },
+        // SPIRAL TOURS (1h Interval, 6m gap, 6m live)
+        { id: 'shellmon', name: "Shellmon", map: "Forest of Beginning", buff: "SK Buff", type: "hourly", offset: 0, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral" },
+        { id: 'gerbemon', name: "Gerbemon", map: "Forest of Marionette", buff: "TA Buff", type: "hourly", offset: 6, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral" },
+        { id: 'megadramon', name: "Megadramon", map: "Metal Empire", buff: "AA Buff", type: "hourly", offset: 12, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral" },
+        { id: 'ladydevimon', name: "LadyDevimon", map: "Nightmare Top", buff: "SUP Buff", type: "hourly", offset: 18, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral" },
         
+        // FOREST TOURS (1.5h Interval, 2m gap, 1m 45s live)
         { id: 'orochimon', name: "Orochimon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1175, liveDuration: 105, label: "Forest Tour", lClass: "label-forest" },
         { id: 'mugendramon', name: "Mugendramon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1177, liveDuration: 105, label: "Forest Tour", lClass: "label-forest" },
         { id: 'chaosdramon', name: "Chaosdramon", map: "Forest", buff: "No Buff", type: "interval", interval: 90, refMinute: 1179, liveDuration: 105, label: "Forest Tour", lClass: "label-forest" },
@@ -592,7 +621,15 @@
             const interval = t.type === 'hourly' ? 3600 : t.interval * 60;
             const timeSinceLastSpawn = (interval - timeLeft) % interval;
             const isLive = timeSinceLastSpawn < t.liveDuration;
-            return { ...t, timeLeft, isLive, liveRemaining: isLive ? (t.liveDuration - timeSinceLastSpawn) : 0 };
+            
+            let channel = null;
+            if (isLive && t.label === 'Spiral Tour') {
+                if (timeSinceLastSpawn < 120) channel = "ch 0";
+                else if (timeSinceLastSpawn < 240) channel = "ch 1";
+                else channel = "ch 2";
+            }
+
+            return { ...t, timeLeft, isLive, liveRemaining: isLive ? (t.liveDuration - timeSinceLastSpawn) : 0, channel };
         });
 
         const tourData = processItems(tours);
@@ -633,14 +670,20 @@
                         <div class="boss-map">${tour.map}</div>
                         ${buffText ? `<div class="boss-buff">${buffText}</div>` : ''}
                     </div>
-                    <div class="timer">${formatTime(tour.isLive ? tour.liveRemaining : tour.timeLeft)}</div>
+                    <div class="timer-container">
+                        <div class="timer">${formatTime(tour.isLive ? tour.liveRemaining : tour.timeLeft)}</div>
+                        ${tour.isLive && tour.channel ? `<div class="channel-indicator">${tour.channel}</div>` : ''}
+                    </div>
                 </div>
             `;
         };
 
         tourData.forEach(t => {
-            if (t.isLive) liveHtml += renderCard(t);
-            else if (t.timeLeft < 900) upcomingHtml += renderCard(t);
+            if (t.isLive) {
+                liveHtml += renderCard(t);
+            } else if (t.timeLeft < 900) {
+                upcomingHtml += renderCard(t);
+            }
         });
 
         eventData.forEach(e => eventHtml += renderCard(e, 'event-active'));
