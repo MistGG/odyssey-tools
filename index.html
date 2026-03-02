@@ -540,13 +540,26 @@
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playBeep() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.type = 'sine'; osc.frequency.setValueAtTime(880, audioCtx.currentTime); 
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+        
+        const startTime = audioCtx.currentTime;
+        // Play 3 pulses with 0.2s spacing
+        [0, 0.2, 0.4].forEach(delay => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            // 'square' is buzzier and more aggressive than 'sine'
+            osc.type = 'square'; 
+            osc.frequency.setValueAtTime(880, startTime + delay); 
+            
+            // Sharper volume envelope
+            gain.gain.setValueAtTime(0.2, startTime + delay);
+            gain.gain.exponentialRampToValueAtTime(0.01, startTime + delay + 0.15);
+            
+            osc.start(startTime + delay);
+            osc.stop(startTime + delay + 0.15);
+        });
     }
 
     function openSettings() { document.getElementById('settingsOverlay').style.display = 'flex'; }
