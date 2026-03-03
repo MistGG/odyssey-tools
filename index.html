@@ -611,6 +611,7 @@
         { id: 'zhuqiaomon', name: "Zhuqiaomon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1189, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
 
         // TOKYO TOURS (1.5h Interval, sequential 3m windows, starts 22:56 UTC)
+        // Note: Map names cleaned of brackets
         { id: 'tokyo_myotismon_1', name: "Myotismon", map: "Big Sight", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1376, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard', category: "tokyo" },
         { id: 'tokyo_darktyrannomon', name: "DarkTyrannomon", map: "Big Sight", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1379, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'reverse', category: "tokyo" },
         { id: 'tokyo_groundramon', name: "Groundramon and Okuwamon", map: "Odaiba", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1382, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard', category: "tokyo" },
@@ -787,28 +788,41 @@
             .map(t => {
                 const timeLeft = getNextSpawn(t);
                 const interval = t.type === 'hourly' ? 3600 : t.interval * 60;
-                const timeSinceLastSpawn = (interval - timeLeft) % interval;
-                const isLive = timeSinceLastSpawn < t.liveDuration;
+                
+                // Adjustment: Tokyo bosses spawn 10 seconds before listed time
+                const offsetAdjustment = (t.category === 'tokyo') ? 10 : 0;
+                const elapsed = (interval - timeLeft + offsetAdjustment) % interval;
+                const isLive = elapsed < t.liveDuration;
                 
                 let channel = null;
                 if (isLive) {
                     if (t.label === 'Spiral Tour') {
-                        if (timeSinceLastSpawn < 90) channel = "ch 0";
-                        else if (timeSinceLastSpawn < 120) channel = "Swap to Ch 1";
-                        else if (timeSinceLastSpawn < 210) channel = "ch 1";
-                        else if (timeSinceLastSpawn < 240) channel = "Swap to Ch 2";
-                        else if (timeSinceLastSpawn < 330) channel = "ch 2";
+                        // 1m 30s active, 30s swap
+                        if (elapsed < 90) channel = "ch 0";
+                        else if (elapsed < 120) channel = "Swap to Ch 1";
+                        else if (elapsed < 210) channel = "ch 1";
+                        else if (elapsed < 240) channel = "Swap to Ch 2";
+                        else if (elapsed < 330) channel = "ch 2";
                         else channel = "Finished";
                     } else if (t.label === 'Tokyo Tour') {
-                        const elapsed = timeSinceLastSpawn;
+                        // 35s active, 25s swap/downtime
                         const seq = t.rotation === 'reverse' ? ["ch 2", "ch 1", "ch 0"] : ["ch 0", "ch 1", "ch 2"];
-                        if (elapsed < 60) channel = seq[0];
-                        else if (elapsed < 120) channel = seq[1];
-                        else channel = seq[2];
+                        const cycleIndex = Math.floor(elapsed / 60);
+                        const innerElapsed = elapsed % 60;
+                        
+                        if (innerElapsed < 35) {
+                            channel = seq[cycleIndex];
+                        } else if (cycleIndex < 2) {
+                            channel = "Swap to " + seq[cycleIndex + 1];
+                        } else {
+                            channel = "Finished";
+                        }
                     }
                 }
 
-                return { ...t, timeLeft, isLive, liveRemaining: isLive ? (t.liveDuration - timeSinceLastSpawn) : 0, channel };
+                // If Tokyo Tour and we are in the 10s pre-spawn window, we want to show countdown to -10s
+                // but for simplicity, we just keep the standard countdown
+                return { ...t, timeLeft, isLive, liveRemaining: isLive ? (t.liveDuration - elapsed) : 0, channel };
             });
 
         const tourData = processItems(tours);
