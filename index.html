@@ -126,7 +126,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            z-index: 10; /* Keep content strictly above background visuals */
+            z-index: 10;
         }
 
         /* --- Global Top Header --- */
@@ -272,7 +272,6 @@
         .boss-card.event-active {
             border-left-color: var(--event);
             border-color: var(--event);
-            /* Use a solid dark color tinted with orange to block background pass icons */
             background: #1c1814; 
             box-shadow: 0 0 15px rgba(255, 159, 67, 0.1);
         }
@@ -600,20 +599,16 @@
         { id: 'ladydevimon', name: "LadyDevimon", map: "Nightmare Top", buff: "SUP Buff", type: "hourly", offset: 18, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral", category: "spiral" },
         
         // FOREST TOURS (1.5h Interval, staggered, 1m 40s live)
-        // 1m 40s = 1.6667 minutes
         { id: 'orochimon', name: "Orochimon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1175, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
         { id: 'mugendramon', name: "Mugendramon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1177, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
-        // Chaosdramon spawns immediately after Mugendramon dies (1177 + 100s)
         { id: 'chaosdramon', name: "Chaosdramon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1178.6667, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
         { id: 'banchouleomon', name: "BanchouLeomon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1181, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
         { id: 'beelzebumon_1', name: "Beelzebumon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1183, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
-        // Megidramon spawns immediately after the first Beelzebumon dies (1183 + 100s)
         { id: 'megidramon', name: "Megidramon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1184.6667, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
         { id: 'beelzebumon_2', name: "Beelzebumon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1187, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
         { id: 'zhuqiaomon', name: "Zhuqiaomon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1189, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
 
         // TOKYO TOURS (1.5h Interval, sequential windows, starts 22:56 UTC)
-        // Adjusting stagger: 3 mins active + 2 mins gap = 5 min intervals
         { id: 'tokyo_myotismon_1', name: "Myotismon", map: "Big Sight", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1376, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard', category: "tokyo", timing: 'special' },
         { id: 'tokyo_darktyrannomon', name: "DarkTyrannomon", map: "Big Sight", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1381, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'reverse', category: "tokyo", timing: 'special' },
         { id: 'tokyo_groundramon', name: "Groundramon and Okuwamon", map: "Odaiba", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1386, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard', category: "tokyo", timing: 'standard' },
@@ -634,6 +629,27 @@
     let wakeLock = null;
     let effectInterval = null;
 
+    // --- Audio System ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // User interaction to enable audio
+    document.addEventListener('click', () => {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }, { once: false });
+
+    // Background keep-alive (silent heartbeat every 25s)
+    setInterval(() => {
+        if (audioCtx.state === 'running') {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            gain.gain.value = 0.0001; // Inaudible
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+    }, 25000);
+
     async function handleWakeLock(enabled) {
         if (!('wakeLock' in navigator)) return;
         if (enabled) {
@@ -643,22 +659,25 @@
         }
     }
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playBeep() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         
         const startTime = audioCtx.currentTime;
-        [0, 0.2, 0.4].forEach(delay => {
+        // 3-pulse sequence using original SINE wave
+        [0, 0.25, 0.5].forEach(delay => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            osc.type = 'square'; 
+            
+            osc.type = 'sine'; // Reverted to original smooth sound
             osc.frequency.setValueAtTime(880, startTime + delay); 
-            gain.gain.setValueAtTime(0.2, startTime + delay);
-            gain.gain.exponentialRampToValueAtTime(0.01, startTime + delay + 0.15);
+            
+            gain.gain.setValueAtTime(0.4, startTime + delay);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + delay + 0.2);
+            
             osc.start(startTime + delay);
-            osc.stop(startTime + delay + 0.15);
+            osc.stop(startTime + delay + 0.2);
         });
     }
 
@@ -704,7 +723,7 @@
             const s = JSON.parse(savedSettings);
             document.getElementById('notifySpiral').checked = s.spiral;
             document.getElementById('notifyForest').checked = s.forest;
-            document.getElementById('notifyTokyo').checked = !!s.tokyo;
+            if(document.getElementById('notifyTokyo')) document.getElementById('notifyTokyo').checked = !!s.tokyo;
             document.getElementById('notifyEvent').checked = !!s.event;
             document.getElementById('leadTime').value = s.leadTime;
             document.getElementById('wakeLock').checked = !!s.wakeLock;
@@ -791,7 +810,6 @@
                 const timeLeft = getNextSpawn(t);
                 const interval = t.type === 'hourly' ? 3600 : t.interval * 60;
                 
-                // Adjustment: Only specific Tokyo bosses spawn 10 seconds before listed time
                 const offsetAdjustment = (t.category === 'tokyo' && t.timing === 'special') ? 10 : 0;
                 const elapsed = (interval - timeLeft + offsetAdjustment) % interval;
                 const isLive = elapsed < t.liveDuration;
