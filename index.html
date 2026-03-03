@@ -126,6 +126,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            z-index: 10; /* Keep content above rain/shine */
         }
 
         /* --- Global Top Header --- */
@@ -157,8 +158,6 @@
             max-width: 500px;
             margin: 0 auto;
             width: 100%;
-            position: relative;
-            z-index: 10;
         }
 
         /* Discord Button Styling */
@@ -412,7 +411,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1;
+            z-index: 1; /* Behind main-wrapper (z:10) */
             overflow: hidden;
             display: none;
         }
@@ -436,10 +435,11 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 400px;
+            height: 100vh; /* Full height to prevent cutoff */
             pointer-events: none;
-            z-index: 0;
-            background: radial-gradient(circle at center top, rgba(255, 159, 67, 0.15) 0%, transparent 70%);
+            z-index: 0; /* Very back */
+            /* Adjusted gradient: fades smoothly over 80% of the screen */
+            background: radial-gradient(circle at 50% -10%, rgba(255, 159, 67, 0.12) 0%, transparent 80%);
             opacity: 0;
             transition: opacity 2s ease;
         }
@@ -576,7 +576,7 @@
 
         <div class="settings-divider">Special Effects</div>
         <div class="setting-group">
-            <label for="enableEffects">Enable Event Visuals (Rain/Shine)</label>
+            <label for="enableEffects">Enable Event Visuals</label>
             <input type="checkbox" id="enableEffects" checked>
         </div>
 
@@ -723,24 +723,18 @@
         if (!container) return;
         
         const pass = document.createElement('img');
-        pass.src = 'pass.png';
+        pass.src = 'images/pass.png';
         pass.className = 'falling-pass';
         
-        // Random horizontal position
         const left = Math.random() * 100;
         pass.style.left = `${left}vw`;
-        
-        // Random speed
         const duration = 5 + Math.random() * 10;
         pass.style.animationDuration = `${duration}s`;
-        
-        // Random size
         const size = 20 + Math.random() * 20;
         pass.style.width = `${size}px`;
 
         container.appendChild(pass);
         
-        // Clean up after animation
         setTimeout(() => {
             if (pass.parentNode) container.removeChild(pass);
         }, duration * 1000);
