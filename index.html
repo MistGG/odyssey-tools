@@ -632,23 +632,46 @@
     // --- Audio System ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
-    // User interaction to enable audio
+    // Resume audio context on any user interaction
     document.addEventListener('click', () => {
         if (audioCtx.state === 'suspended') audioCtx.resume();
     }, { once: false });
 
-    // Background keep-alive (silent heartbeat every 25s)
+    // Background keep-alive (silent heartbeat every 15s)
+    // Uses noise to prevent "Silence Detection" battery saving
     setInterval(() => {
         if (audioCtx.state === 'running') {
-            const osc = audioCtx.createOscillator();
+            const bufferSize = audioCtx.sampleRate * 0.1;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) { data[i] = Math.random() * 0.01; }
+            const source = audioCtx.createBufferSource();
+            source.buffer = buffer;
             const gain = audioCtx.createGain();
-            gain.gain.value = 0.0001; // Inaudible
-            osc.connect(gain);
+            gain.gain.value = 0.00001; // Effectively inaudible
+            source.connect(gain);
             gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
+            source.start();
         }
-    }, 25000);
+    }, 15000);
+
+    // --- Web Worker Timer Setup (Prevents Background Throttling) ---
+    const workerCode = `
+        let timer = null;
+        self.onmessage = function(e) {
+            if (e.data === 'start') {
+                if (timer) clearInterval(timer);
+                timer = setInterval(() => { self.postMessage('tick'); }, 1000);
+            } else if (e.data === 'stop') {
+                clearInterval(timer);
+                timer = null;
+            }
+        };
+    `;
+    const blob = new Blob([workerCode], { type: 'application/javascript' });
+    const worker = new Worker(URL.createObjectURL(blob));
+    worker.onmessage = () => { update(); };
+    worker.postMessage('start');
 
     async function handleWakeLock(enabled) {
         if (!('wakeLock' in navigator)) return;
@@ -661,21 +684,16 @@
 
     function playBeep() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        
         const startTime = audioCtx.currentTime;
-        // 3-pulse sequence using original SINE wave
         [0, 0.25, 0.5].forEach(delay => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            
-            osc.type = 'sine'; // Reverted to original smooth sound
+            osc.type = 'sine'; 
             osc.frequency.setValueAtTime(880, startTime + delay); 
-            
-            gain.gain.setValueAtTime(0.4, startTime + delay);
+            gain.gain.setValueAtTime(0.5, startTime + delay);
             gain.gain.exponentialRampToValueAtTime(0.001, startTime + delay + 0.2);
-            
             osc.start(startTime + delay);
             osc.stop(startTime + delay + 0.2);
         });
@@ -744,23 +762,17 @@
     function createFallingPass() {
         const container = document.getElementById('eventRainContainer');
         if (!container) return;
-        
         const pass = document.createElement('img');
         pass.src = 'images/pass.png';
         pass.className = 'falling-pass';
-        
         const left = Math.random() * 100;
         pass.style.left = `${left}vw`;
         const duration = 5 + Math.random() * 10;
         pass.style.animationDuration = `${duration}s`;
         const size = 20 + Math.random() * 20;
         pass.style.width = `${size}px`;
-
         container.appendChild(pass);
-        
-        setTimeout(() => {
-            if (pass.parentNode) container.removeChild(pass);
-        }, duration * 1000);
+        setTimeout(() => { if (pass.parentNode) container.removeChild(pass); }, duration * 1000);
     }
 
     function getNextSpawn(tour) {
@@ -792,16 +804,13 @@
         const now = new Date();
         const sTime = document.getElementById('serverTime');
         if(sTime) sTime.innerText = now.toUTCString().split(' ')[4];
-        
         const leadSec = (parseInt(document.getElementById('leadTime').value) || 1) * 60;
-        
         const visibility = {
             spiral: document.getElementById('showSpiral').checked,
             forest: document.getElementById('showForest').checked,
             tokyo: document.getElementById('showTokyo').checked,
             event: document.getElementById('showEvent').checked
         };
-        
         const effectsEnabled = document.getElementById('enableEffects').checked;
 
         const processItems = (itemList) => itemList
@@ -809,11 +818,9 @@
             .map(t => {
                 const timeLeft = getNextSpawn(t);
                 const interval = t.type === 'hourly' ? 3600 : t.interval * 60;
-                
                 const offsetAdjustment = (t.category === 'tokyo' && t.timing === 'special') ? 10 : 0;
                 const elapsed = (interval - timeLeft + offsetAdjustment) % interval;
                 const isLive = elapsed < t.liveDuration;
-                
                 let channel = null;
                 if (isLive) {
                     if (t.label === 'Spiral Tour') {
@@ -827,7 +834,6 @@
                         const seq = t.rotation === 'reverse' ? ["ch 2", "ch 1", "ch 0"] : ["ch 0", "ch 1", "ch 2"];
                         const cycleIndex = Math.floor(elapsed / 60);
                         const innerElapsed = elapsed % 60;
-                        
                         if (t.timing === 'special') {
                             if (innerElapsed < 35) channel = seq[cycleIndex];
                             else if (cycleIndex < 2) channel = "Swap to " + seq[cycleIndex + 1];
@@ -838,7 +844,6 @@
                         }
                     }
                 }
-
                 return { ...t, timeLeft, isLive, liveRemaining: isLive ? (t.liveDuration - elapsed) : 0, channel };
             });
 
@@ -848,20 +853,14 @@
         const ogPassLive = eventData.some(e => e.id === 'ogpass' && e.isLive);
         const rainContainer = document.getElementById('eventRainContainer');
         const shineOverlay = document.getElementById('eventShineOverlay');
-
         if (ogPassLive && effectsEnabled) {
             rainContainer.style.display = 'block';
             shineOverlay.style.opacity = '1';
-            if (!effectInterval) {
-                effectInterval = setInterval(createFallingPass, 800);
-            }
+            if (!effectInterval) { effectInterval = setInterval(createFallingPass, 800); }
         } else {
             if (rainContainer) rainContainer.style.display = 'none';
             if (shineOverlay) shineOverlay.style.opacity = '0';
-            if (effectInterval) {
-                clearInterval(effectInterval);
-                effectInterval = null;
-            }
+            if (effectInterval) { clearInterval(effectInterval); effectInterval = null; }
             if (rainContainer) rainContainer.innerHTML = '';
         }
 
@@ -885,66 +884,26 @@
         lastToursData = tourData; lastEventData = eventData;
 
         let liveHtml = "", upcomingHtml = "", eventHtml = "", fullHtml = "";
-
         const renderCard = (tour, extraClass = "") => {
-            let buffText = "";
-            if (tour.isLive && tour.label === 'Special Event') {
-                buffText = 'Collect your pass!';
-            } else if (tour.buff && tour.buff !== "No Buff") {
-                buffText = tour.buff;
-            }
-
-            return `
-                <div class="boss-card ${tour.isLive ? 'active ' + extraClass : (tour.timeLeft < 900 ? 'upcoming' : '')}">
-                    <div class="boss-info">
-                        <span class="tour-label ${tour.lClass}">${tour.label}</span>
-                        <div class="boss-name">${tour.name}</div>
-                        <div class="boss-map">${tour.map}</div>
-                        ${buffText ? `<div class="boss-buff">${buffText}</div>` : ''}
-                    </div>
-                    <div class="timer-container">
-                        <div class="timer">${formatTime(tour.isLive ? tour.liveRemaining : tour.timeLeft)}</div>
-                        ${tour.isLive && tour.channel ? `<div class="channel-indicator">${tour.channel}</div>` : ''}
-                    </div>
-                </div>
-            `;
+            let buffText = tour.isLive && tour.label === 'Special Event' ? 'Collect your pass!' : (tour.buff && tour.buff !== "No Buff" ? tour.buff : "");
+            return `<div class="boss-card ${tour.isLive ? 'active ' + extraClass : (tour.timeLeft < 900 ? 'upcoming' : '')}"><div class="boss-info"><span class="tour-label ${tour.lClass}">${tour.label}</span><div class="boss-name">${tour.name}</div><div class="boss-map">${tour.map}</div>${buffText ? `<div class="boss-buff">${buffText}</div>` : ''}</div><div class="timer-container"><div class="timer">${formatTime(tour.isLive ? tour.liveRemaining : tour.timeLeft)}</div>${tour.isLive && tour.channel ? `<div class="channel-indicator">${tour.channel}</div>` : ''}</div></div>`;
         };
 
-        tourData.forEach(t => {
-            if (t.isLive) liveHtml += renderCard(t);
-            else if (t.timeLeft < 900) upcomingHtml += renderCard(t);
-        });
-
+        tourData.forEach(t => { if (t.isLive) liveHtml += renderCard(t); else if (t.timeLeft < 900) upcomingHtml += renderCard(t); });
         eventData.forEach(e => eventHtml += renderCard(e, 'event-active'));
+        tourData.filter(t => !t.isLive && t.timeLeft >= 900).sort((a, b) => a.timeLeft - b.timeLeft).forEach(t => fullHtml += renderCard(t));
 
-        tourData
-            .filter(t => !t.isLive && t.timeLeft >= 900)
-            .sort((a, b) => a.timeLeft - b.timeLeft)
-            .forEach(t => fullHtml += renderCard(t));
-
-        const lSec = document.getElementById('liveSection');
-        if(lSec) lSec.style.display = liveHtml ? 'block' : 'none';
-        const lList = document.getElementById('liveList');
-        if(lList) lList.innerHTML = liveHtml;
-        
-        const eSec = document.getElementById('eventSection');
-        if(eSec) eSec.style.display = visibility.event ? 'block' : 'none';
-        const eList = document.getElementById('eventList');
-        if(eList) eList.innerHTML = eventHtml;
-        
-        const uList = document.getElementById('upcomingList');
-        if(uList) uList.innerHTML = upcomingHtml || '<div class="empty-msg">No tours starting soon...</div>';
-        const fList = document.getElementById('fullList');
-        if(fList) fList.innerHTML = fullHtml;
+        if(document.getElementById('liveSection')) document.getElementById('liveSection').style.display = liveHtml ? 'block' : 'none';
+        if(document.getElementById('liveList')) document.getElementById('liveList').innerHTML = liveHtml;
+        if(document.getElementById('eventSection')) document.getElementById('eventSection').style.display = visibility.event ? 'block' : 'none';
+        if(document.getElementById('eventList')) document.getElementById('eventList').innerHTML = eventHtml;
+        if(document.getElementById('upcomingList')) document.getElementById('upcomingList').innerHTML = upcomingHtml || '<div class="empty-msg">No tours starting soon...</div>';
+        if(document.getElementById('fullList')) document.getElementById('fullList').innerHTML = fullHtml;
     }
 
-    document.querySelectorAll('input').forEach(input => {
-        input.addEventListener('change', saveSettings);
-    });
-
+    document.querySelectorAll('input').forEach(input => { input.addEventListener('change', saveSettings); });
     document.getElementById('leadTime').addEventListener('change', saveSettings);
-
-    window.onload = () => { loadData(); setInterval(update, 1000); update(); };
+    window.onload = () => { loadData(); update(); };
 </script>
 
 </body>
