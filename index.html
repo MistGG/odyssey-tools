@@ -159,15 +159,15 @@
             box-sizing: border-box;
         }
 
-        /* Top Status Grid (Live / Upcoming / Event) */
+        /* Top Status Grid (Auto-balancing based on active sections) */
         .top-status-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
 
-        /* Bottom Schedule Grid (Spiral/Forest/Tokyo) */
+        /* Bottom Schedule Grid */
         .schedule-categories-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -463,7 +463,7 @@
         <div class="header-right">
             <a href="https://discord.gg/7pn8YUFkcG" target="_blank" class="discord-btn">
                 <img src="images/lostangels.gif" alt="" class="discord-gif" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3670/3670157.png'">
-                <span>Lost Angels</span>
+                <span>Join Lost Angels</span>
             </a>
             <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">
                 <svg id="themeIcon" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
@@ -573,9 +573,8 @@
         { id: 'tokyo_aquilamon', name: "Aquilamon", map: "Valley of Light", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1416, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'reverse', category: "tokyo", timing: 'standard' }
     ];
 
-    const specialEvents = [
-        { id: 'ogpass', name: "OG Pass", map: "Special Event", buff: "Fortune Event", type: "interval", interval: 120, refMinute: 1200, liveDuration: 1800, label: "Special Event", lClass: "label-event", category: "event" }
-    ];
+    // OG Pass is over, set specialEvents to empty
+    const specialEvents = [];
 
     let lastToursData = [];
     let lastEventData = [];
@@ -650,7 +649,7 @@
     function loadData() {
         const s = JSON.parse(localStorage.getItem('dmo_tour_settings') || '{}');
         
-        // Default everything to TRUE if undefined
+        // Show by default if the setting hasn't been specified yet
         document.getElementById('notifySpiral').checked = s.spiral !== false;
         document.getElementById('notifyForest').checked = s.forest !== false;
         document.getElementById('notifyTokyo').checked = s.tokyo !== false;
@@ -806,8 +805,9 @@
         document.getElementById('forestScheduleSection').style.display = vis.forest ? 'block' : 'none';
         document.getElementById('tokyoScheduleSection').style.display = vis.tokyo ? 'block' : 'none';
         
+        // Hide Event Section if empty or toggled off
+        document.getElementById('eventSection').style.display = (eventData.length > 0 && vis.event) ? 'block' : 'none';
         document.getElementById('liveSection').style.display = (vis.spiral || vis.forest || vis.tokyo) ? 'block' : 'none';
-        document.getElementById('eventSection').style.display = vis.event ? 'block' : 'none';
     }
 
     document.querySelectorAll('input').forEach(input => input.addEventListener('change', saveSettings));
