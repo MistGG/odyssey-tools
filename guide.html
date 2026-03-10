@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DM:Odyssey Tools</title>
+    <title>Guide | DM:Odyssey Tools</title>
+    <style>body.guide-loading #guideMain{opacity:0;visibility:hidden}body:not(.guide-loading) #guideMain{opacity:1;visibility:visible;transition:opacity .15s ease}</style>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
-<body data-theme="dark">
+<body data-theme="dark" class="guide-loading">
 
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -16,7 +18,7 @@
         </button>
     </div>
     <nav class="nav-links">
-        <a href="index.html" class="nav-item active">
+        <a href="index.html" class="nav-item">
             <svg class="nav-icon" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
             <span>Home</span>
         </a>
@@ -24,7 +26,7 @@
             <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
             <span>News</span>
         </a>
-        <a href="guides.html" class="nav-item">
+        <a href="guides.html" class="nav-item active">
             <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
             <span>Guides</span>
         </a>
@@ -41,7 +43,7 @@
 
 <div class="main-wrapper">
     <header class="global-header">
-        <div class="page-title-mobile">HOME</div>
+        <div class="page-title-mobile">GUIDE</div>
         <div class="header-right">
             <a href="https://discord.gg/7pn8YUFkcG" target="_blank" class="discord-btn">
                 <img src="images/lostangels.gif" alt="" class="discord-gif" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3670/3670157.png'">
@@ -53,43 +55,23 @@
         </div>
     </header>
 
-    <main class="content-area">
-        <div class="landing-hero">
-            <h1>DM:Odyssey Tools</h1>
-            <p>A personal, now public collection of resources for Digimon Masters Odyssey, the better DMO private server!</p>
+    <main class="content-area" id="guideMain">
+        <a href="guides.html" class="guide-detail-back">← Back to guides</a>
+        <div class="guide-detail-layout" id="guideDetailLayout">
+            <div class="guide-detail-image-wrap">
+                <img class="guide-detail-image" id="guideDetailImage" src="" alt="">
+            </div>
+            <article class="guide-detail-article">
+                <h1 class="guide-detail-title" id="guideDetailTitle"></h1>
+                <div class="guide-article markdown-body" id="guideDetailBody"></div>
+            </article>
         </div>
-
-        <section class="landing-section">
-            <h2>Get started</h2>
-            <div class="landing-cards">
-                <a href="timers.html" class="landing-card">
-                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                    Timers
-                </a>
-                <a href="news.html" class="landing-card">
-                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                    News
-                </a>
-                <a href="guides.html" class="landing-card">
-                    <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
-                    Guides
-                </a>
-            </div>
-        </section>
-
-        <section class="landing-section">
-            <h2>Updates</h2>
-            <div class="news-list" id="updatesList"></div>
-            <div class="updates-view-all" id="updatesViewAll">
-                <a href="news.html">News</a>
-                <a href="guides.html">Guides</a>
-            </div>
-        </section>
+        <div class="guide-not-found" id="guideNotFound" style="display: none;">Guide not found. <a href="guides.html">Back to guides</a>.</div>
     </main>
 </div>
 
 <script src="js/common.js"></script>
-<script src="js/index.js"></script>
+<script src="js/guide.js"></script>
 
 </body>
 </html>

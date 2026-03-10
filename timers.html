@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timers | DM:Odyssey Tools</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="dark">
+
+<div id="eventShineOverlay"></div>
+<div id="eventRainContainer"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="sidebar-header-text">DM:Odyssey Tools</span>
+        <button class="sidebar-toggle" id="sidebarToggle" title="Collapse menu" aria-label="Collapse menu">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+    </div>
+    <nav class="nav-links">
+        <a href="index.html" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>Home</span>
+        </a>
+        <a href="news.html" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            <span>News</span>
+        </a>
+        <a href="guides.html" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+            <span>Guides</span>
+        </a>
+        <a href="timers.html" class="nav-item active">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            <span>Timers</span>
+        </a>
+    </nav>
+    <div class="sidebar-footer">made by Mimlemel</div>
+</aside>
+<button class="sidebar-open-fab" id="sidebarOpenFab" title="Open menu" aria-label="Open menu">
+    <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+</button>
+
+<div class="main-wrapper">
+    <header class="global-header">
+        <div class="page-title-mobile">TIMERS</div>
+        <div class="header-right">
+            <a href="https://discord.gg/7pn8YUFkcG" target="_blank" class="discord-btn">
+                <img src="images/lostangels.gif" alt="" class="discord-gif" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3670/3670157.png'">
+                <span>Join Lost Angels</span>
+            </a>
+            <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">
+                <svg id="themeIcon" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="content-area">
+        <div class="timers-header">
+            <h1 style="margin:0; font-size: 1.2rem; letter-spacing: 1px;">TOUR TRACKER</h1>
+            <button class="icon-btn" onclick="openSettings()" title="Settings">
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            </button>
+        </div>
+
+        <div class="server-time-card">
+            <span id="serverTime">00:00:00</span>
+            <span class="utc-label">SERVER UTC</span>
+        </div>
+
+        <!-- Top Status Row: Live - Upcoming - Events -->
+        <div class="top-status-grid">
+            <div class="section" id="liveSection">
+                <h2 style="color:var(--active);">🔥 Live Tours</h2>
+                <div id="liveList"></div>
+            </div>
+            <div class="section" id="upcomingSection">
+                <h2 style="color:var(--primary);">🔔 Upcoming Tours</h2>
+                <div id="upcomingList"></div>
+            </div>
+            <div class="section" id="eventSection">
+                <h2 style="color:var(--event);">🌟 Special Events</h2>
+                <div id="eventList"></div>
+            </div>
+        </div>
+
+        <!-- Categorized Schedules -->
+        <div class="schedule-categories-grid">
+            <div class="section" id="spiralScheduleSection">
+                <h2 style="color:var(--spiral);">🌀 Spiral Tour</h2>
+                <div id="spiralScheduleList"></div>
+            </div>
+            <div class="section" id="forestScheduleSection">
+                <h2 style="color:var(--forest);">🌲 Forest Tour</h2>
+                <div id="forestScheduleList"></div>
+            </div>
+            <div class="section" id="tokyoScheduleSection">
+                <h2 style="color:var(--tokyo);">🏙️ Tokyo Tour</h2>
+                <div id="tokyoScheduleList"></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div id="settingsOverlay" onclick="closeSettings(event)">
+    <div class="settings-modal" onclick="event.stopPropagation()">
+        <div class="settings-header">
+            <h3>Settings</h3>
+            <button class="close-btn" onclick="document.getElementById('settingsOverlay').style.display='none'">&times;</button>
+        </div>
+        
+        <div class="settings-divider">Notifications</div>
+        <div class="setting-group"><label for="notifySpiral">Spiral Start</label><input type="checkbox" id="notifySpiral" checked></div>
+        <div class="setting-group"><label for="notifyForest">Forest Start</label><input type="checkbox" id="notifyForest" checked></div>
+        <div class="setting-group"><label for="notifyTokyo">Tokyo Start</label><input type="checkbox" id="notifyTokyo" checked></div>
+        <div class="setting-group"><label for="notifyEvent">Special Event</label><input type="checkbox" id="notifyEvent" checked></div>
+        <div class="setting-group"><label>Notify mins before:</label><input type="number" id="leadTime" class="lead-time-input" value="1" min="1" max="15"></div>
+
+        <div class="settings-divider">Display Sections</div>
+        <div class="setting-group"><label for="showSpiral">Show Spiral Tour</label><input type="checkbox" id="showSpiral" checked></div>
+        <div class="setting-group"><label for="showForest">Show Forest Tour</label><input type="checkbox" id="showForest" checked></div>
+        <div class="setting-group"><label for="showTokyo">Show Tokyo Tour</label><input type="checkbox" id="showTokyo" checked></div>
+        <div class="setting-group"><label for="showEvent">Show Special Event</label><input type="checkbox" id="showEvent" checked></div>
+
+        <div class="settings-divider">Special Effects</div>
+        <div class="setting-group"><label for="enableEffects">Enable Event Visuals</label><input type="checkbox" id="enableEffects" checked></div>
+
+        <div class="settings-divider">Performance</div>
+        <div class="setting-group"><label for="wakeLock">Keep Screen Awake</label><input type="checkbox" id="wakeLock"></div>
+
+        <button class="test-btn" onclick="playBeep()">Test Beep Sound</button>
+    </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/timers.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "defaultThumbnail": "images/oddysey_logo.png",
+  "defaultCardImage": "images/oddysey_logo.png",
+  "items": [
+    {
+      "date": "March 9 2026",
+      "dateSort": "2026-03-09",
+      "title": "New QoL info!",
+      "excerpt": "Ipoii uploaded info on brand new QoL!.",
+      "link": "news.html",
+      "body": "<p>This server supports a ton of QoL improvements, here's a few!<ul><li>Auto-Cloning</li><li>Walk around by just clicking on the map</li><li>Hide all players (with filters for friends, party and guild!)</li><li>Raid Teleport immediately to any raid from anywhere to anywhere!</li><li>Loot tables are now visible on the map per digimon!</li><li>Mob Find on the map lets you travel straight to a digimon, it'll even port you there!</li><li>Gear comparison right in the UI by hovering over gear</li></ul></p><div class=\"video-embed\"><iframe src=\"https://www.youtube.com/embed/IVwaq0F5Yew\" title=\"YouTube Short\" allowfullscreen></iframe></div>"
+    },
+    {
+      "date": "March 8 2026",
+      "dateSort": "2026-03-08",
+      "title": "Combat Teaser!",
+      "excerpt": "Ipoii uploaded a preview of combat!.",
+      "link": "news.html",
+      "body": "<p>Digimon Odyssey has a completely different combat experience. Various traditional MMO classes such as tanks, supports, and ranged/melee/caster are available as well as Hybrid for advanced players.</p><div class=\"video-embed\"><iframe src=\"https://www.youtube.com/embed/ducCSuuDqB0\" title=\"YouTube Short\" allowfullscreen></iframe></div>"
+    },
+    {
+      "date": "March 7 2026",
+      "dateSort": "2026-03-07",
+      "title": "Questing Teaser!",
+      "excerpt": "Ipoii uploaded a preview of questing!.",
+      "link": "news.html",
+      "body": "<p>The new questing system supports being able to easily travel between maps and simply click to go to the quest objective.</p><div class=\"video-embed\"><iframe src=\"https://www.youtube.com/embed/p7CddLL9dDU\" title=\"YouTube Short\" allowfullscreen></iframe></div>"
+    },
+    {
+      "date": "March 7 2026",
+      "dateSort": "2026-03-07",
+      "title": "Official Discord open",
+      "excerpt": "Open Beta announced!",
+      "body": "<p>Digimon Masters Odyssey has been announced with an beta launching on March 14th!</p><p>You can join the Discord server <a href=\"https://discord.gg/EegYuwFWg3\">here</a> to get the latest updates and news.</p>",
+      "link": "news.html"
+    }
+  ]
+}
