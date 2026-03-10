@@ -1,4 +1,4 @@
-/* Requires js/common.js for toggleTheme, updateThemeIcon, toggleSidebar, openSidebar */
+/* Requires js/common.js for toggleSidebar, openSidebar */
 
 var tours = [
     { id: 'shellmon', name: "Shellmon", map: "Forest of Beginning", buff: "SK Buff", type: "hourly", offset: 0, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral", category: "spiral" },
@@ -104,9 +104,7 @@ function loadData() {
     document.getElementById('showTokyo').checked = s.showTokyo !== false;
     document.getElementById('showEvent').checked = s.showEvent !== false;
     document.getElementById('enableEffects').checked = s.enableEffects !== false;
-    var savedTheme = localStorage.getItem('dmo_tour_theme') || 'dark';
-    document.body.setAttribute('data-theme', savedTheme);
-    if (typeof updateThemeIcon === 'function') updateThemeIcon(savedTheme);
+    document.body.setAttribute('data-theme', 'dark');
 }
 
 function getNextSpawn(tour) {

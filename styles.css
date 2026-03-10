@@ -41,6 +41,10 @@
 body {
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
+    background-image: linear-gradient(180deg, rgba(22, 22, 26, 0.82) 0%, rgba(22, 22, 26, 0.88) 35%, var(--bg) 70%, var(--bg) 100%), url("images/digi_wallpaper.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     color: var(--text);
     margin: 0;
     transition: background 0.3s, color 0.3s;
@@ -48,6 +52,7 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
 }
+
 
 /* --- Sidebar --- */
 .sidebar {
@@ -131,16 +136,6 @@ body {
     margin-left: 0;
 }
 
-.main-wrapper {
-    background-image: linear-gradient(180deg, rgba(22, 22, 26, 0.92) 0%, var(--bg) 35%, var(--bg) 100%), url("images/digi_wallpaper.jpg");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
-
-[data-theme="light"] .main-wrapper {
-    background-image: linear-gradient(180deg, rgba(244, 247, 249, 0.88) 0%, var(--bg) 40%, var(--bg) 100%), url("images/digi_wallpaper.jpg");
-}
 
 .sidebar-open-fab {
     display: none;
@@ -397,26 +392,31 @@ body {
 .news-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 10px;
 }
 
 .news-item {
     display: flex;
     align-items: flex-start;
     gap: 14px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
+    padding: 14px 16px;
+    background: rgba(22, 22, 26, 0.88);
+    border: 1px solid var(--border);
+    border-radius: 10px;
     text-decoration: none;
     color: var(--text);
-    transition: background 0.15s;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
 }
 
 .news-item:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
 }
 
 .news-item:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(28, 28, 33, 0.95);
+    border-color: var(--primary);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 212, 255, 0.15);
 }
 
 .news-item-thumb {
@@ -513,18 +513,20 @@ body {
 
 .news-card {
     display: block;
-    background: var(--card);
+    background: rgba(28, 28, 33, 0.92);
     border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
     text-decoration: none;
     color: var(--text);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .news-card:hover {
     border-color: var(--primary);
-    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.08);
+    background: rgba(33, 33, 38, 0.96);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 212, 255, 0.2);
 }
 
 .news-card-image {
@@ -623,17 +625,19 @@ body {
     align-items: center;
     gap: 12px;
     padding: 10px 12px;
-    background: var(--card);
+    background: rgba(28, 28, 33, 0.92);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     text-decoration: none;
     color: var(--text);
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
 }
 
 .guide-card:hover {
     border-color: var(--primary);
-    background: rgba(0, 212, 255, 0.06);
+    background: rgba(33, 33, 38, 0.96);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 212, 255, 0.15);
 }
 
 .guide-card-image {
@@ -691,6 +695,11 @@ body {
     display: flex;
     gap: 32px;
     align-items: flex-start;
+    background: rgba(28, 28, 33, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 
 .guide-detail-image-wrap {
@@ -844,6 +853,11 @@ body {
     top: 0;
     left: 0;
     right: 0;
+    background: rgba(28, 28, 33, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 
 .news-content.news-article-visible .news-article-view {

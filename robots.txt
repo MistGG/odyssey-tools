@@ -1,0 +1,6 @@
+# DM:Odyssey Tools - allow search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Sitemap: replace with your live site URL once deployed, e.g.:
+# Sitemap: https://mistgg.github.io/odyssey-tools/sitemap.xml
