@@ -8,4 +8,5 @@ DM:Odyssey provides a much larger base inventory with an extremely large warehou
 - Digivice & Chipsets
 - Skills
 
+Credit to <a href="https://www.youtube.com/@DMOGaming">Ipoi</a>.
 <div class="video-embed"><iframe src="https://www.youtube.com/embed/UBSFVyMxilo" title="YouTube Short" allowfullscreen></iframe></div>
