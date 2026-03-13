@@ -216,6 +216,24 @@ body {
     letter-spacing: 0.5px;
 }
 
+.sidebar-footer a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.sidebar-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Editor link hidden from public; shown only when DMO_EDITOR_ACCESS is set (see common.js) */
+.sidebar-footer .editor-wrap {
+    display: none;
+}
+
+body.dmo-editor-visible .sidebar-footer .editor-wrap {
+    display: inline;
+}
+
 /* --- Main content --- */
 .global-header {
     height: var(--header-height);
@@ -377,6 +395,33 @@ body {
     height: 24px;
     fill: currentColor;
     flex-shrink: 0;
+}
+
+.landing-card--discord {
+    padding: 18px 16px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    background: var(--discord);
+    border-color: var(--discord);
+    color: #fff;
+}
+
+.landing-card--discord:hover {
+    background: var(--discord-hover);
+    border-color: var(--discord-hover);
+    color: #fff;
+}
+
+.landing-card--discord .discord-icon {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.landing-card--discord-text {
+    line-height: 1.3;
+    max-width: 100%;
+    word-break: break-word;
 }
 
 /* --- News --- */
@@ -1392,6 +1437,13 @@ body {
     letter-spacing: 1.5px;
     border-bottom: 1px solid var(--border);
     padding-bottom: 4px;
+}
+
+.settings-hint {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin: 6px 0 0 0;
+    line-height: 1.35;
 }
 
 /* --- Event effects (Timers) --- */

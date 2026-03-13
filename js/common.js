@@ -39,11 +39,32 @@
             }
         } catch (e) {}
     }
+    function isEditorAllowed() {
+        try {
+            if (typeof location === 'undefined') return false;
+            var host = location.hostname || '';
+            if (host === 'localhost' || host === '127.0.0.1') return true;
+            if (localStorage.getItem('dmo_editor_access') === '1') return true;
+        } catch (e) {}
+        return false;
+    }
+    function applyEditorVisibility() {
+        try {
+            if (location.hash === '#editor-access') {
+                localStorage.setItem('dmo_editor_access', '1');
+                location.hash = '';
+            }
+            if (isEditorAllowed()) document.body.classList.add('dmo-editor-visible');
+        } catch (e) {}
+    }
+    window.isEditorAllowed = isEditorAllowed;
+
     document.addEventListener('DOMContentLoaded', function() {
         var toggleBtn = document.getElementById('sidebarToggle');
         var openFab = document.getElementById('sidebarOpenFab');
         if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
         if (openFab) openFab.addEventListener('click', openSidebar);
         applySavedState();
+        applyEditorVisibility();
     });
 })();

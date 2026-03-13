@@ -4,24 +4,7 @@ var tours = [
     { id: 'shellmon', name: "Shellmon", map: "Forest of Beginning", buff: "SK Buff", type: "hourly", offset: 0, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral", category: "spiral" },
     { id: 'gerbemon', name: "Gerbemon", map: "Forest of Marionette", buff: "TA Buff", type: "hourly", offset: 6, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral", category: "spiral" },
     { id: 'megadramon', name: "Megadramon", map: "Metal Empire", buff: "AA Buff", type: "hourly", offset: 12, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral", category: "spiral" },
-    { id: 'ladydevimon', name: "LadyDevimon", map: "Nightmare Top", buff: "SUP Buff", type: "hourly", offset: 18, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral", category: "spiral" },
-    { id: 'orochimon', name: "Orochimon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1175, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
-    { id: 'mugendramon', name: "Mugendramon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1177, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
-    { id: 'chaosdramon', name: "Chaosdramon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1178.6667, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
-    { id: 'banchouleomon', name: "BanchouLeomon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1181, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
-    { id: 'beelzebumon_1', name: "Beelzebumon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1183, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
-    { id: 'megidramon', name: "Megidramon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1184.6667, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
-    { id: 'beelzebumon_2', name: "Beelzebumon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1187, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
-    { id: 'zhuqiaomon', name: "Zhuqiaomon", map: "Forest", buff: "Goggle farming", type: "interval", interval: 90, refMinute: 1189, liveDuration: 100, label: "Forest Tour", lClass: "label-forest", category: "forest" },
-    { id: 'tokyo_myotismon_1', name: "Myotismon", map: "Big Sight", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1376, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard', category: "tokyo", timing: 'special' },
-    { id: 'tokyo_darktyrannomon', name: "DarkTyrannomon", map: "Big Sight", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1381, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'reverse', category: "tokyo", timing: 'special' },
-    { id: 'tokyo_groundramon', name: "Groundramon and Okuwamon", map: "Odaiba", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1386, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard', category: "tokyo", timing: 'standard' },
-    { id: 'tokyo_myotismon_2', name: "Myotismon", map: "Minato City", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1391, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard', category: "tokyo", timing: 'standard' },
-    { id: 'tokyo_myotismon_3', name: "Myotismon", map: "Shibuya", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1396, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard', category: "tokyo", timing: 'standard' },
-    { id: 'tokyo_phantomon', name: "Phantomon", map: "Shibuya", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1401, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'reverse', category: "tokyo", timing: 'standard' },
-    { id: 'tokyo_raremon', name: "Raremon", map: "Shibuya", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1406, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard', category: "tokyo", timing: 'standard' },
-    { id: 'tokyo_mammothmon', name: "Mammothmon", map: "Valley of Light", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1411, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'standard', category: "tokyo", timing: 'standard' },
-    { id: 'tokyo_aquilamon', name: "Aquilamon", map: "Valley of Light", buff: "Digivice Farming", type: "interval", interval: 90, refMinute: 1416, liveDuration: 180, label: "Tokyo Tour", lClass: "label-tokyo", rotation: 'reverse', category: "tokyo", timing: 'standard' }
+    { id: 'ladydevimon', name: "LadyDevimon", map: "Nightmare Top", buff: "SUP Buff", type: "hourly", offset: 18, liveDuration: 360, label: "Spiral Tour", lClass: "label-spiral", category: "spiral" }
 ];
 
 var specialEvents = [];
@@ -30,23 +13,7 @@ var lastToursData = [];
 var lastEventData = [];
 var wakeLock = null;
 var effectInterval = null;
-
-var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-document.addEventListener('click', function() { if (audioCtx.state === 'suspended') audioCtx.resume(); }, false);
-
-setInterval(function() {
-    if (audioCtx.state === 'running') {
-        var buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.1, audioCtx.sampleRate);
-        var data = buffer.getChannelData(0);
-        for (var i = 0; i < data.length; i++) data[i] = Math.random() * 0.01;
-        var source = audioCtx.createBufferSource();
-        source.buffer = buffer;
-        var gain = audioCtx.createGain();
-        gain.gain.value = 0.00001;
-        source.connect(gain); gain.connect(audioCtx.destination);
-        source.start();
-    }
-}, 15000);
+var DEFAULT_TITLE = 'Timers | DM:Odyssey Tools';
 
 var workerCode = 'var timer = null; self.onmessage = function(e) { if (e.data === "start") { timer = setInterval(function() { self.postMessage("tick"); }, 1000); } };';
 var blob = new Blob([workerCode], { type: 'application/javascript' });
@@ -54,21 +21,40 @@ var worker = new Worker(URL.createObjectURL(blob));
 worker.onmessage = function() { update(); };
 worker.postMessage('start');
 
-function playBeep() {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    var startTime = audioCtx.currentTime;
-    [0, 0.25, 0.5].forEach(function(delay) {
-        var osc = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, startTime + delay);
-        gain.gain.setValueAtTime(0.5, startTime + delay);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + delay + 0.2);
-        osc.start(startTime + delay);
-        osc.stop(startTime + delay + 0.2);
-    });
+function showBrowserNotification(tour, leadSec) {
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    var mins = Math.ceil(leadSec / 60);
+    var body = tour.name + ' starting in ' + (mins === 1 ? '1 minute' : mins + ' minutes') + '!';
+    try {
+        new Notification('Spiral Tour', { body: body, requireInteraction: true, icon: '../images/favicon/favicon-32x32.png' });
+    } catch (e) {}
 }
+
+function requestNotificationPermission() {
+    if (typeof Notification === 'undefined') return;
+    if (Notification.permission === 'granted') return;
+    if (Notification.permission !== 'denied') Notification.requestPermission();
+}
+
+function applyWakeLock(wantLock) {
+    if (!navigator.wakeLock) return;
+    if (wantLock && document.visibilityState === 'visible') {
+        if (!wakeLock) {
+            navigator.wakeLock.request('screen').then(function(wl) { wakeLock = wl; }).catch(function() {});
+        }
+    } else {
+        if (wakeLock) {
+            wakeLock.release();
+            wakeLock = null;
+        }
+    }
+}
+
+document.addEventListener('visibilitychange', function() {
+    var el = document.getElementById('wakeLock');
+    if (el && el.checked && document.visibilityState === 'visible') applyWakeLock(true);
+    if (document.visibilityState !== 'visible' && wakeLock) { wakeLock.release(); wakeLock = null; }
+});
 
 function openSettings() { document.getElementById('settingsOverlay').style.display = 'flex'; }
 function closeSettings(e) { if (e.target.id === 'settingsOverlay') e.target.style.display = 'none'; }
@@ -76,33 +62,22 @@ function closeSettings(e) { if (e.target.id === 'settingsOverlay') e.target.styl
 function saveSettings() {
     var s = {
         spiral: document.getElementById('notifySpiral').checked,
-        forest: document.getElementById('notifyForest').checked,
-        tokyo: document.getElementById('notifyTokyo').checked,
-        event: document.getElementById('notifyEvent').checked,
         leadTime: parseInt(document.getElementById('leadTime').value, 10) || 1,
         wakeLock: document.getElementById('wakeLock').checked,
         showSpiral: document.getElementById('showSpiral').checked,
-        showForest: document.getElementById('showForest').checked,
-        showTokyo: document.getElementById('showTokyo').checked,
-        showEvent: document.getElementById('showEvent').checked,
         enableEffects: document.getElementById('enableEffects').checked
     };
     localStorage.setItem('dmo_tour_settings', JSON.stringify(s));
+    applyWakeLock(s.wakeLock);
     update();
 }
 
 function loadData() {
     var s = JSON.parse(localStorage.getItem('dmo_tour_settings') || '{}');
     document.getElementById('notifySpiral').checked = s.spiral !== false;
-    document.getElementById('notifyForest').checked = s.forest !== false;
-    document.getElementById('notifyTokyo').checked = s.tokyo !== false;
-    document.getElementById('notifyEvent').checked = s.event !== false;
     document.getElementById('leadTime').value = s.leadTime || 1;
     document.getElementById('wakeLock').checked = !!s.wakeLock;
     document.getElementById('showSpiral').checked = s.showSpiral !== false;
-    document.getElementById('showForest').checked = s.showForest !== false;
-    document.getElementById('showTokyo').checked = s.showTokyo !== false;
-    document.getElementById('showEvent').checked = s.showEvent !== false;
     document.getElementById('enableEffects').checked = s.enableEffects !== false;
     document.body.setAttribute('data-theme', 'dark');
 }
@@ -134,8 +109,7 @@ function formatTime(seconds) {
 
 function renderCard(t, extraClass) {
     extraClass = extraClass || "";
-    var buffText = t.isLive && t.label === 'Special Event' ? 'Collect your pass!' : (t.buff && t.buff !== "No Buff" ? t.buff : "");
-    return '<div class="boss-card ' + (t.isLive ? 'active ' + extraClass : (t.timeLeft < 900 ? 'upcoming' : '')) + '"><div class="boss-info"><span class="tour-label ' + t.lClass + '">' + t.label + '</span><div class="boss-name">' + t.name + '</div><div class="boss-map">' + t.map + '</div>' + (buffText ? '<div class="boss-buff">' + buffText + '</div>' : '') + '</div><div class="timer-container"><div class="timer">' + formatTime(t.isLive ? t.liveRemaining : t.timeLeft) + '</div>' + (t.isLive && t.channel ? '<div class="channel-indicator">' + t.channel + '</div>' : '') + '</div></div>';
+    return '<div class="boss-card ' + (t.isLive ? 'active ' + extraClass : (t.timeLeft < 900 ? 'upcoming' : '')) + '"><div class="boss-info"><span class="tour-label ' + t.lClass + '">' + t.label + '</span><div class="boss-name">' + t.name + '</div><div class="boss-map">' + t.map + '</div></div><div class="timer-container"><div class="timer">' + formatTime(t.isLive ? t.liveRemaining : t.timeLeft) + '</div>' + (t.isLive && t.channel ? '<div class="channel-indicator">' + t.channel + '</div>' : '') + '</div></div>';
 }
 
 function update() {
@@ -145,9 +119,9 @@ function update() {
     var leadSec = (parseInt(document.getElementById('leadTime').value, 10) || 1) * 60;
     var vis = {
         spiral: document.getElementById('showSpiral').checked,
-        forest: document.getElementById('showForest').checked,
-        tokyo: document.getElementById('showTokyo').checked,
-        event: document.getElementById('showEvent').checked
+        forest: false,
+        tokyo: false,
+        event: false
     };
     var effectsEnabled = document.getElementById('enableEffects').checked;
 
@@ -210,13 +184,11 @@ function update() {
         if (!el || !el.checked) return;
         var prev = previousList.find(function(p) { return p.id === current.id; });
         if (prev && prev.timeLeft > leadSec && current.timeLeft <= leadSec && current.timeLeft > 0) {
-            if (!onlyBossId || current.id === onlyBossId) playBeep();
+            if (!onlyBossId || current.id === onlyBossId) showBrowserNotification(current, leadSec);
         }
     }
     tourData.forEach(function(t) {
         if (t.category === 'spiral') checkNotify(t, lastToursData, 'notifySpiral', 'shellmon');
-        if (t.category === 'forest') checkNotify(t, lastToursData, 'notifyForest', 'orochimon');
-        if (t.category === 'tokyo') checkNotify(t, lastToursData, 'notifyTokyo', 'tokyo_myotismon_1');
     });
     eventData.forEach(function(e) { checkNotify(e, lastEventData, 'notifyEvent'); });
     lastToursData = tourData; lastEventData = eventData;
@@ -224,21 +196,31 @@ function update() {
     var liveItems = tourData.filter(function(t) { return t.isLive; });
     var upcomingItems = tourData.filter(function(t) { return !t.isLive && t.timeLeft < 900; }).sort(function(a, b) { return a.timeLeft - b.timeLeft; });
     var spiralSched = tourData.filter(function(t) { return t.category === 'spiral' && !t.isLive; }).sort(function(a, b) { return a.timeLeft - b.timeLeft; });
-    var forestSched = tourData.filter(function(t) { return t.category === 'forest' && !t.isLive; }).sort(function(a, b) { return a.timeLeft - b.timeLeft; });
-    var tokyoSched = tourData.filter(function(t) { return t.category === 'tokyo' && !t.isLive; }).sort(function(a, b) { return a.timeLeft - b.timeLeft; });
 
     document.getElementById('liveList').innerHTML = liveItems.map(function(t) { return renderCard(t); }).join('') || '<div class="empty-msg">None Active</div>';
     document.getElementById('upcomingList').innerHTML = upcomingItems.map(function(t) { return renderCard(t); }).join('') || '<div class="empty-msg">Clear</div>';
-    document.getElementById('eventList').innerHTML = eventData.map(function(e) { return renderCard(e, 'event-active'); }).join('') || '<div class="empty-msg">None Active</div>';
     document.getElementById('spiralScheduleList').innerHTML = spiralSched.map(function(t) { return renderCard(t); }).join('');
-    document.getElementById('forestScheduleList').innerHTML = forestSched.map(function(t) { return renderCard(t); }).join('');
-    document.getElementById('tokyoScheduleList').innerHTML = tokyoSched.map(function(t) { return renderCard(t); }).join('');
     document.getElementById('spiralScheduleSection').style.display = vis.spiral ? 'block' : 'none';
-    document.getElementById('forestScheduleSection').style.display = vis.forest ? 'block' : 'none';
-    document.getElementById('tokyoScheduleSection').style.display = vis.tokyo ? 'block' : 'none';
-    document.getElementById('eventSection').style.display = (eventData.length > 0 && vis.event) ? 'block' : 'none';
-    document.getElementById('liveSection').style.display = (vis.spiral || vis.forest || vis.tokyo) ? 'block' : 'none';
+    document.getElementById('liveSection').style.display = vis.spiral ? 'block' : 'none';
+    document.getElementById('upcomingSection').style.display = vis.spiral ? 'block' : 'none';
+
+    var notifySpiralEl = document.getElementById('notifySpiral');
+    var inNotifyWindow = notifySpiralEl && notifySpiralEl.checked && tourData.some(function(t) {
+        return t.category === 'spiral' && t.timeLeft <= leadSec && t.timeLeft > 0;
+    });
+    if (inNotifyWindow) {
+        var nextUp = tourData.filter(function(t) { return t.category === 'spiral' && t.timeLeft <= leadSec && t.timeLeft > 0; }).sort(function(a, b) { return a.timeLeft - b.timeLeft; })[0];
+        document.title = nextUp ? '🔔 ' + nextUp.name + ' starting soon! – ' + DEFAULT_TITLE : DEFAULT_TITLE;
+    } else {
+        document.title = DEFAULT_TITLE;
+    }
 }
 
 document.querySelectorAll('input').forEach(function(input) { input.addEventListener('change', saveSettings); });
-window.onload = function() { loadData(); update(); };
+window.onload = function() {
+    document.title = DEFAULT_TITLE;
+    loadData();
+    var wlEl = document.getElementById('wakeLock');
+    if (wlEl && wlEl.checked) applyWakeLock(true);
+    update();
+};

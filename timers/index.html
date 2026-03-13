@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timers | DM:Odyssey Tools</title>
-    <meta name="description" content="Tour tracker for Digimon Masters Odyssey: Spiral, Forest, Tokyo tours and special events. Live and upcoming schedule in server time.">
+    <meta name="description" content="Tour tracker for Digimon Masters Odyssey: Spiral tours. Live and upcoming schedule in server time.">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Timers | DM:Odyssey Tools">
-    <meta property="og:description" content="Tour tracker for Digimon Masters Odyssey: Spiral, Forest, Tokyo tours and special events. Live and upcoming schedule in server time.">
+    <meta property="og:description" content="Tour tracker for Digimon Masters Odyssey: Spiral tours. Live and upcoming schedule in server time.">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Timers | DM:Odyssey Tools">
-    <meta name="twitter:description" content="Tour tracker for Digimon Masters Odyssey: Spiral, Forest, Tokyo tours and special events. Live and upcoming schedule in server time.">
+    <meta name="twitter:description" content="Tour tracker for Digimon Masters Odyssey: Spiral tours. Live and upcoming schedule in server time.">
     <link rel="icon" type="image/x-icon" href="../images/favicon/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon/favicon-16x16.png">
@@ -48,7 +48,7 @@
             <span>Timers</span>
         </a>
     </nav>
-    <div class="sidebar-footer">made by Mimlemel</div>
+    <div class="sidebar-footer">made by Mimlemel<span class="editor-wrap"> · <a href="../editor/" class="editor-link">Add post</a></span></div>
 </aside>
 <button class="sidebar-open-fab" id="sidebarOpenFab" title="Open menu" aria-label="Open menu">
     <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
@@ -78,7 +78,7 @@
             <span class="utc-label">SERVER UTC</span>
         </div>
 
-        <!-- Top Status Row: Live - Upcoming - Events -->
+        <!-- Top Status Row: Live - Upcoming -->
         <div class="top-status-grid">
             <div class="section" id="liveSection">
                 <h2 style="color:var(--active);">🔥 Live Tours</h2>
@@ -88,25 +88,13 @@
                 <h2 style="color:var(--primary);">🔔 Upcoming Tours</h2>
                 <div id="upcomingList"></div>
             </div>
-            <div class="section" id="eventSection">
-                <h2 style="color:var(--event);">🌟 Special Events</h2>
-                <div id="eventList"></div>
-            </div>
         </div>
 
-        <!-- Categorized Schedules -->
+        <!-- Spiral Schedule -->
         <div class="schedule-categories-grid">
             <div class="section" id="spiralScheduleSection">
                 <h2 style="color:var(--spiral);">🌀 Spiral Tour</h2>
                 <div id="spiralScheduleList"></div>
-            </div>
-            <div class="section" id="forestScheduleSection">
-                <h2 style="color:var(--forest);">🌲 Forest Tour</h2>
-                <div id="forestScheduleList"></div>
-            </div>
-            <div class="section" id="tokyoScheduleSection">
-                <h2 style="color:var(--tokyo);">🏙️ Tokyo Tour</h2>
-                <div id="tokyoScheduleList"></div>
             </div>
         </div>
     </main>
@@ -121,24 +109,19 @@
         
         <div class="settings-divider">Notifications</div>
         <div class="setting-group"><label for="notifySpiral">Spiral Start</label><input type="checkbox" id="notifySpiral" checked></div>
-        <div class="setting-group"><label for="notifyForest">Forest Start</label><input type="checkbox" id="notifyForest" checked></div>
-        <div class="setting-group"><label for="notifyTokyo">Tokyo Start</label><input type="checkbox" id="notifyTokyo" checked></div>
-        <div class="setting-group"><label for="notifyEvent">Special Event</label><input type="checkbox" id="notifyEvent" checked></div>
         <div class="setting-group"><label>Notify mins before:</label><input type="number" id="leadTime" class="lead-time-input" value="1" min="1" max="15"></div>
+        <button type="button" class="test-btn" id="enableBrowserNotificationsBtn" onclick="requestNotificationPermission()" style="margin-top:6px;">Enable browser notifications</button>
+        <p class="settings-hint">System notifications help when the tab is in the background. Grant permission above to get them.</p>
 
         <div class="settings-divider">Display Sections</div>
         <div class="setting-group"><label for="showSpiral">Show Spiral Tour</label><input type="checkbox" id="showSpiral" checked></div>
-        <div class="setting-group"><label for="showForest">Show Forest Tour</label><input type="checkbox" id="showForest" checked></div>
-        <div class="setting-group"><label for="showTokyo">Show Tokyo Tour</label><input type="checkbox" id="showTokyo" checked></div>
-        <div class="setting-group"><label for="showEvent">Show Special Event</label><input type="checkbox" id="showEvent" checked></div>
 
         <div class="settings-divider">Special Effects</div>
         <div class="setting-group"><label for="enableEffects">Enable Event Visuals</label><input type="checkbox" id="enableEffects" checked></div>
 
         <div class="settings-divider">Performance</div>
-        <div class="setting-group"><label for="wakeLock">Keep Screen Awake</label><input type="checkbox" id="wakeLock"></div>
-
-        <button class="test-btn" onclick="playBeep()">Test Beep Sound</button>
+        <div class="setting-group"><label for="wakeLock">Keep screen awake</label><input type="checkbox" id="wakeLock"></div>
+        <p class="settings-hint">While this page is open and visible, prevents the device from dimming or locking the screen. Useful on phones when watching the timer.</p>
     </div>
 </div>
 

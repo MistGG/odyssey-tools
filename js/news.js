@@ -15,12 +15,22 @@
         document.getElementById('newsArticleDate').textContent = it.date || '';
         document.getElementById('newsArticleTitle').textContent = it.title || '';
         var bodyEl = document.getElementById('newsArticleBody');
-        if (it.body) {
-            bodyEl.innerHTML = it.body;
-            bodyEl.classList.add('has-html');
+        function setBody(html, isMarkdown) {
+            bodyEl.innerHTML = html || it.excerpt || '';
+            bodyEl.classList.toggle('has-html', !!html);
+            bodyEl.classList.toggle('has-markdown', isMarkdown);
+        }
+        if (it.bodyFile) {
+            fetch((window.DMO_BASE || '') + it.bodyFile)
+                .then(function(r) { return r.text(); })
+                .then(function(md) {
+                    setBody(typeof marked !== 'undefined' ? marked.parse(md) : md.replace(/\n/g, '<br>'), true);
+                })
+                .catch(function() { setBody(it.excerpt || '', false); });
+        } else if (it.body) {
+            setBody(it.body, false);
         } else {
-            bodyEl.textContent = it.excerpt || '';
-            bodyEl.classList.remove('has-html');
+            setBody(it.excerpt || '', false);
         }
         content.classList.add('news-article-visible');
         view.setAttribute('aria-hidden', 'false');

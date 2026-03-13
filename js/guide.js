@@ -54,12 +54,21 @@
                 imgEl.onerror = function() { this.onerror = null; this.src = defaultImg; };
                 document.title = (g.title || 'Guide') + ' | DM:Odyssey Tools';
                 titleEl.textContent = g.title || '';
-                if (g.body) {
-                    bodyEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(g.body) : g.body.replace(/\n/g, '<br>');
-                    bodyEl.classList.add('has-markdown');
+                function setBody(html) {
+                    bodyEl.innerHTML = html || g.excerpt || 'No content yet.';
+                    bodyEl.classList.toggle('has-markdown', !!html);
+                }
+                if (g.bodyFile) {
+                    fetch((window.DMO_BASE || '') + g.bodyFile)
+                        .then(function(r) { return r.text(); })
+                        .then(function(md) {
+                            setBody(typeof marked !== 'undefined' ? marked.parse(md) : md.replace(/\n/g, '<br>'));
+                        })
+                        .catch(function() { setBody(g.excerpt || 'No content yet.'); });
+                } else if (g.body) {
+                    setBody(typeof marked !== 'undefined' ? marked.parse(g.body) : g.body.replace(/\n/g, '<br>'));
                 } else {
-                    bodyEl.textContent = g.excerpt || 'No content yet.';
-                    bodyEl.classList.remove('has-markdown');
+                    setBody(g.excerpt || 'No content yet.');
                 }
                 revealGuide();
             })

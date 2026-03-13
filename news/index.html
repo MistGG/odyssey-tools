@@ -18,6 +18,7 @@
     <link rel="manifest" href="../images/favicon/site.webmanifest">
     <style>body.news-loading #newsMain{opacity:0;visibility:hidden}body:not(.news-loading) #newsMain{opacity:1;visibility:visible;transition:opacity .15s ease}</style>
     <link rel="stylesheet" href="../styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body data-theme="dark" class="news-loading">
 
@@ -46,7 +47,7 @@
             <span>Timers</span>
         </a>
     </nav>
-    <div class="sidebar-footer">made by Mimlemel</div>
+    <div class="sidebar-footer">made by Mimlemel<span class="editor-wrap"> · <a href="../editor/" class="editor-link">Add post</a></span></div>
 </aside>
 <button class="sidebar-open-fab" id="sidebarOpenFab" title="Open menu" aria-label="Open menu">
     <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>

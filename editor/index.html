@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add post | DM:Odyssey Tools</title>
+    <link rel="icon" type="image/x-icon" href="../images/favicon/favicon.ico">
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .editor-page { max-width: 900px; margin: 0 auto; padding: 24px 20px 60px; }
+        .editor-page h1 { font-size: 1.35rem; color: var(--primary); margin-bottom: 8px; }
+        .editor-page .back { display: inline-block; margin-bottom: 20px; color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+        .editor-page .back:hover { text-decoration: underline; }
+        .editor-form { display: flex; flex-direction: column; gap: 16px; }
+        .editor-form label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: var(--text-dim); }
+        .editor-form input[type="text"], .editor-form input[type="date"], .editor-form select, .editor-form textarea {
+            width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);
+            background: rgba(28, 28, 33, 0.9); color: var(--text); font: inherit; box-sizing: border-box;
+        }
+        .editor-form textarea { min-height: 200px; resize: vertical; }
+        .editor-form .row { display: flex; gap: 16px; flex-wrap: wrap; }
+        .editor-form .row > * { flex: 1; min-width: 140px; }
+        .editor-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+        .editor-actions button {
+            padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--card);
+            color: var(--text); font-weight: 600; cursor: pointer; font-size: 0.9rem;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .editor-actions button:hover { border-color: var(--primary); background: rgba(0, 212, 255, 0.08); }
+        .editor-actions button.primary { background: var(--primary); color: var(--bg); border-color: var(--primary); }
+        .editor-actions button.primary:hover { filter: brightness(1.1); }
+        .editor-preview { margin-top: 24px; padding: 20px; border-radius: 10px; border: 1px solid var(--border);
+            background: rgba(28, 28, 33, 0.92); min-height: 80px; }
+        .editor-preview h3 { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .editor-preview .preview-body { font-size: 0.95rem; line-height: 1.6; }
+        .editor-preview .preview-body p { margin: 0 0 0.75em 0; }
+        .editor-preview .preview-body .video-embed { margin: 1em 0; }
+        .editor-instructions { margin-top: 24px; padding: 16px; border-radius: 8px; background: rgba(0, 212, 255, 0.06);
+            border: 1px solid rgba(0, 212, 255, 0.2); font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
+        .editor-instructions strong { color: var(--primary); }
+        .editor-toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px;
+            background: var(--primary); color: var(--bg); font-weight: 600; font-size: 0.9rem;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        .editor-toast.show { opacity: 1; }
+    </style>
+</head>
+<body data-theme="dark">
+<script src="../js/common.js"></script>
+<div class="editor-page">
+    <a href="../" class="back">← Back to site</a>
+
+    <div id="editorRestricted" style="display: none; padding: 24px 0; color: var(--text-dim);">
+        <p>This page is for site editors only. Visit the site from <strong>localhost</strong> or use the editor access link to unlock.</p>
+        <p style="font-size: 0.85rem; margin-top: 12px;">To show the editor link and access this page on the live site, visit <strong>yoursite/#editor-access</strong> once (e.g. <code>https://mistgg.github.io/odyssey-tools/#editor-access</code>). This sets a flag in your browser.</p>
+    </div>
+    <div id="editorContent">
+    <h1>Add news or guide</h1>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 24px;">Draft a post, then download the content file and copy the JSON entry to add to your repo.</p>
+
+    <form id="editorForm" class="editor-form">
+        <div>
+            <label for="postType">Type</label>
+            <select id="postType" required>
+                <option value="news">News</option>
+                <option value="guide">Guide</option>
+            </select>
+        </div>
+        <div id="guideCategoryWrap" style="display: none;">
+            <label for="guideCategory">Category (guides only)</label>
+            <select id="guideCategory">
+                <option value="Roles">Roles</option>
+                <option value="Digimon">Digimon</option>
+                <option value="Dungeons">Dungeons</option>
+            </select>
+        </div>
+        <div class="row">
+            <div>
+                <label for="title">Title</label>
+                <input type="text" id="title" required placeholder="e.g. Marketplace Reveal">
+            </div>
+            <div>
+                <label for="date">Date (YYYY-MM-DD)</label>
+                <input type="date" id="date" required>
+            </div>
+        </div>
+        <div>
+            <label for="excerpt">Excerpt (short summary)</label>
+            <input type="text" id="excerpt" placeholder="One line for cards and previews">
+        </div>
+        <div>
+            <label for="image">Image path (optional)</label>
+            <input type="text" id="image" placeholder="e.g. images/oddysey_logo.png">
+        </div>
+        <div>
+            <label for="body">Body (Markdown)</label>
+            <textarea id="body" placeholder="Write in Markdown. For videos use: &#10;&lt;div class=\"video-embed\"&gt;&lt;iframe src=\"https://www.youtube.com/embed/VIDEO_ID\" title=\"...\" allowfullscreen&gt;&lt;/iframe&gt;&lt;/div&gt;"></textarea>
+        </div>
+        <div class="editor-actions">
+            <button type="button" id="btnPreview">Preview</button>
+            <button type="button" id="btnDownload" class="primary">Download .md file</button>
+            <button type="button" id="btnCopyJson" class="primary">Copy JSON entry</button>
+        </div>
+    </form>
+
+    <div id="previewBox" class="editor-preview" style="display: none;">
+        <h3>Preview</h3>
+        <div id="previewBody" class="preview-body"></div>
+    </div>
+
+    <div class="editor-instructions">
+        <strong>After creating a post:</strong><br>
+        1. Click <strong>Download .md file</strong> and save it to <code>content/news/</code> (for news) or <code>content/guides/</code> (for guides).<br>
+        2. Click <strong>Copy JSON entry</strong>, then open <code>json/news.json</code> or <code>json/guides.json</code>, and paste the entry into the <code>items</code> array (newest at the top).
+    </div>
+    </div>
+</div>
+
+<div id="toast" class="editor-toast">Copied to clipboard!</div>
+
+<script>
+(function() {
+    function gate() {
+        if (location.hash === '#editor-access') {
+            try { localStorage.setItem('dmo_editor_access', '1'); location.hash = ''; } catch (e) {}
+        }
+        var allowed = typeof isEditorAllowed !== 'undefined' && isEditorAllowed();
+        if (!allowed) {
+            document.getElementById('editorRestricted').style.display = 'block';
+            document.getElementById('editorContent').style.display = 'none';
+        }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', gate);
+    else gate();
+</script>
+<script>
+(function() {
+    var form = document.getElementById('editorForm');
+    var postType = document.getElementById('postType');
+    var guideCategoryWrap = document.getElementById('guideCategoryWrap');
+    var titleEl = document.getElementById('title');
+    var dateEl = document.getElementById('date');
+    var excerptEl = document.getElementById('excerpt');
+    var imageEl = document.getElementById('image');
+    var bodyEl = document.getElementById('body');
+    var previewBox = document.getElementById('previewBox');
+    var previewBody = document.getElementById('previewBody');
+    var btnPreview = document.getElementById('btnPreview');
+    var btnDownload = document.getElementById('btnDownload');
+    var btnCopyJson = document.getElementById('btnCopyJson');
+    var toast = document.getElementById('toast');
+
+    dateEl.value = new Date().toISOString().slice(0, 10);
+
+    postType.addEventListener('change', function() {
+        guideCategoryWrap.style.display = postType.value === 'guide' ? 'block' : 'none';
+    });
+
+    function slug(s) {
+        return (s || '').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    }
+
+    function getBodyFilePath() {
+        var type = postType.value;
+        var name = slug(titleEl.value) || 'untitled';
+        return 'content/' + type + '/' + name + '.md';
+    }
+
+    btnPreview.addEventListener('click', function() {
+        var md = bodyEl.value;
+        previewBody.innerHTML = typeof marked !== 'undefined' ? marked.parse(md || '*No content*') : (md || '*No content*').replace(/\n/g, '<br>');
+        previewBox.style.display = 'block';
+    });
+
+    btnDownload.addEventListener('click', function() {
+        var body = bodyEl.value;
+        var filename = (slug(titleEl.value) || 'untitled') + '.md';
+        var blob = new Blob([body], { type: 'text/markdown' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        showToast('Downloaded ' + filename);
+    });
+
+    btnCopyJson.addEventListener('click', function() {
+        var type = postType.value;
+        var dateSort = dateEl.value;
+        var dateDisplay = type === 'news' ? (dateSort ? new Date(dateSort + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '') : dateSort;
+        var entry = {
+            date: dateDisplay,
+            dateSort: dateSort,
+            title: titleEl.value.trim() || 'Untitled',
+            excerpt: excerptEl.value.trim() || '',
+            bodyFile: getBodyFilePath()
+        };
+        if (imageEl.value.trim()) entry.image = imageEl.value.trim();
+        if (type === 'guide') {
+            entry.category = document.getElementById('guideCategory').value;
+            entry.date = dateSort;
+            delete entry.dateSort;
+            delete entry.dateDisplay;
+        }
+        var json = JSON.stringify(entry, null, 2);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(json).then(function() { showToast('JSON copied to clipboard!'); });
+        } else {
+            var ta = document.createElement('textarea');
+            ta.value = json;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('JSON copied to clipboard!');
+        }
+    });
+
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(function() { toast.classList.remove('show'); }, 2500);
+    }
+})();
+</script>
+</body>
+</html>
