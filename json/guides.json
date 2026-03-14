@@ -5,34 +5,34 @@
     {
       "id": "role-tank",
       "category": "Roles",
-      "date": "2026-03-09",
+      "date": "2026-03-13",
       "title": "Tank",
-      "excerpt": "Absorb damage and protect the party.",
+      "excerpt": "Defends the party and absorbs damage.",
       "image": "images/roles/tank.png",
       "bodyFile": "content/guides/tank.md"
     },
     {
       "id": "role-melee",
       "category": "Roles",
-      "date": "2026-03-09",
+      "date": "2026-03-13",
       "title": "Melee",
-      "excerpt": "Close-range damage dealers.",
+      "excerpt": "Close-range attacker. Deals high damage in melee combat.",
       "image": "images/roles/melee.png",
       "bodyFile": "content/guides/melee.md"
     },
     {
       "id": "role-ranged",
       "category": "Roles",
-      "date": "2026-03-09",
+      "date": "2026-03-13",
       "title": "Ranged",
-      "excerpt": "Attack from a distance.",
+      "excerpt": "Long-range attacker. Deals damage from a safe distance.",
       "image": "images/roles/ranged.png",
       "bodyFile": "content/guides/ranged.md"
     },
     {
       "id": "role-support",
       "category": "Roles",
-      "date": "2026-03-09",
+      "date": "2026-03-13",
       "title": "Support",
       "excerpt": "Heal and buff allies.",
       "image": "images/roles/support.png",
@@ -41,9 +41,9 @@
     {
       "id": "role-hybrid",
       "category": "Roles",
-      "date": "2026-03-09",
+      "date": "2026-03-13",
       "title": "Hybrid",
-      "excerpt": "Flex between damage and utility.",
+      "excerpt": "Versatile Digimon capable of fulfilling multiple roles.",
       "image": "images/roles/hybrid.png",
       "bodyFile": "content/guides/hybrid.md"
     },
