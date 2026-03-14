@@ -56,7 +56,7 @@
     </div>
     <div id="editorContent">
     <h1>Add news or guide</h1>
-    <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 24px;">Draft a post, then download the content file and copy the JSON entry to add to your repo.</p>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 24px;">Draft a post, then download the content file and copy the JSON entry to add to your repo. For guides, you can also edit an existing one.</p>
 
     <form id="editorForm" class="editor-form">
         <div>
@@ -67,12 +67,29 @@
             </select>
         </div>
         <div id="guideCategoryWrap" style="display: none;">
+            <label for="guideMode">Mode (guides)</label>
+            <select id="guideMode">
+                <option value="new">New guide</option>
+                <option value="edit">Edit existing guide</option>
+            </select>
+        </div>
+        <div id="guideSelectWrap" style="display: none;">
+            <label for="guideSelect">Choose guide to edit</label>
+            <select id="guideSelect">
+                <option value="">— Load list —</option>
+            </select>
+        </div>
+        <div id="guideCategoryWrap2" style="display: none;">
             <label for="guideCategory">Category (guides only)</label>
             <select id="guideCategory">
                 <option value="Roles">Roles</option>
                 <option value="Digimon">Digimon</option>
                 <option value="Dungeons">Dungeons</option>
             </select>
+        </div>
+        <div id="guideIdWrap" style="display: none;">
+            <label for="guideId">ID (optional, for URLs e.g. role-tank)</label>
+            <input type="text" id="guideId" placeholder="e.g. role-tank">
         </div>
         <div class="row">
             <div>
@@ -109,9 +126,9 @@
     </div>
 
     <div class="editor-instructions">
-        <strong>After creating a post:</strong><br>
-        1. Click <strong>Download .md file</strong> and save it to <code>content/news/</code> (for news) or <code>content/guides/</code> (for guides).<br>
-        2. Click <strong>Copy JSON entry</strong>, then open <code>json/news.json</code> or <code>json/guides.json</code>, and paste the entry into the <code>items</code> array (newest at the top).
+        <strong>After creating or editing a post:</strong><br>
+        1. Click <strong>Download .md file</strong> and save to <code>content/news/</code> or <code>content/guides/</code> (overwrite the file when editing).<br>
+        2. Click <strong>Copy JSON entry</strong>, then open <code>json/news.json</code> or <code>json/guides.json</code> and paste (or replace the existing entry when editing).
     </div>
     </div>
 </div>
@@ -135,9 +152,18 @@
 </script>
 <script>
 (function() {
+    var base = window.DMO_BASE || '';
+    if (!base && window.location.pathname.indexOf('/editor') !== -1) base = '../';
     var form = document.getElementById('editorForm');
     var postType = document.getElementById('postType');
     var guideCategoryWrap = document.getElementById('guideCategoryWrap');
+    var guideSelectWrap = document.getElementById('guideSelectWrap');
+    var guideCategoryWrap2 = document.getElementById('guideCategoryWrap2');
+    var guideIdWrap = document.getElementById('guideIdWrap');
+    var guideMode = document.getElementById('guideMode');
+    var guideSelect = document.getElementById('guideSelect');
+    var guideCategory = document.getElementById('guideCategory');
+    var guideIdEl = document.getElementById('guideId');
     var titleEl = document.getElementById('title');
     var dateEl = document.getElementById('date');
     var excerptEl = document.getElementById('excerpt');
@@ -150,10 +176,73 @@
     var btnCopyJson = document.getElementById('btnCopyJson');
     var toast = document.getElementById('toast');
 
+    var currentBodyFilePath = null;
+    var guidesData = null;
+
     dateEl.value = new Date().toISOString().slice(0, 10);
 
-    postType.addEventListener('change', function() {
-        guideCategoryWrap.style.display = postType.value === 'guide' ? 'block' : 'none';
+    function showGuideFields() {
+        var isGuide = postType.value === 'guide';
+        guideCategoryWrap.style.display = isGuide ? 'block' : 'none';
+        guideCategoryWrap2.style.display = isGuide ? 'block' : 'none';
+        guideIdWrap.style.display = isGuide ? 'block' : 'none';
+        guideSelectWrap.style.display = (isGuide && guideMode.value === 'edit') ? 'block' : 'none';
+        if (!isGuide) currentBodyFilePath = null;
+    }
+
+    postType.addEventListener('change', showGuideFields);
+
+    guideMode.addEventListener('change', function() {
+        guideSelectWrap.style.display = (postType.value === 'guide' && guideMode.value === 'edit') ? 'block' : 'none';
+        if (guideMode.value === 'new') {
+            currentBodyFilePath = null;
+            guideSelect.value = '';
+        }
+        if (guideMode.value === 'edit' && (!guidesData || !guidesData.items || guidesData.items.length === 0)) {
+            loadGuidesList();
+        }
+    });
+
+    function loadGuidesList() {
+        guideSelect.innerHTML = '<option value="">Loading…</option>';
+        fetch(base + 'json/guides.json')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                guidesData = data;
+                var items = data.items || [];
+                guideSelect.innerHTML = '<option value="">— Choose a guide —</option>';
+                items.forEach(function(it, i) {
+                    var label = (it.title || 'Untitled') + ' (' + (it.category || '') + (it.id ? ', ' + it.id : '') + ')';
+                    guideSelect.appendChild(new Option(label, i));
+                });
+            })
+            .catch(function() {
+                guideSelect.innerHTML = '<option value="">Failed to load</option>';
+            });
+    }
+
+    guideSelect.addEventListener('change', function() {
+        var val = guideSelect.value;
+        if (val === '' || !guidesData || !guidesData.items) return;
+        var idx = parseInt(val, 10);
+        var g = guidesData.items[idx];
+        if (!g) return;
+        titleEl.value = g.title || '';
+        dateEl.value = (g.date || '').slice(0, 10) || dateEl.value;
+        excerptEl.value = g.excerpt || '';
+        imageEl.value = g.image || '';
+        guideCategory.value = g.category || 'Roles';
+        guideIdEl.value = g.id || '';
+        currentBodyFilePath = g.bodyFile || null;
+        bodyEl.value = '';
+        if (g.bodyFile) {
+            fetch(base + g.bodyFile)
+                .then(function(r) { return r.text(); })
+                .then(function(t) { bodyEl.value = t; })
+                .catch(function() { bodyEl.value = g.body || ''; });
+        } else {
+            bodyEl.value = g.body || '';
+        }
     });
 
     function slug(s) {
@@ -161,6 +250,7 @@
     }
 
     function getBodyFilePath() {
+        if (currentBodyFilePath) return currentBodyFilePath;
         var type = postType.value;
         var name = slug(titleEl.value) || 'untitled';
         return 'content/' + type + '/' + name + '.md';
@@ -174,7 +264,8 @@
 
     btnDownload.addEventListener('click', function() {
         var body = bodyEl.value;
-        var filename = (slug(titleEl.value) || 'untitled') + '.md';
+        var path = getBodyFilePath();
+        var filename = path.split('/').pop() || (slug(titleEl.value) || 'untitled') + '.md';
         var blob = new Blob([body], { type: 'text/markdown' });
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
@@ -197,8 +288,9 @@
         };
         if (imageEl.value.trim()) entry.image = imageEl.value.trim();
         if (type === 'guide') {
-            entry.category = document.getElementById('guideCategory').value;
+            entry.category = guideCategory.value;
             entry.date = dateSort;
+            if (guideIdEl.value.trim()) entry.id = guideIdEl.value.trim();
             delete entry.dateSort;
             delete entry.dateDisplay;
         }
@@ -221,6 +313,8 @@
         toast.classList.add('show');
         setTimeout(function() { toast.classList.remove('show'); }, 2500);
     }
+
+    showGuideFields();
 })();
 </script>
 </body>

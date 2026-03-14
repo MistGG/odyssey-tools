@@ -107,6 +107,18 @@ body {
     transition: 0.2s;
 }
 
+.sidebar .sidebar-toggle {
+    position: fixed;
+    top: 50%;
+    left: calc(var(--nav-width) - 38px);
+    transform: translateY(-50%);
+    z-index: 1002;
+}
+
+.sidebar.collapsed .sidebar-toggle {
+    display: none;
+}
+
 .sidebar-toggle:hover {
     color: var(--primary);
     border-color: var(--primary);
@@ -797,6 +809,12 @@ body.dmo-editor-visible .sidebar-footer .editor-wrap {
     display: block;
 }
 
+.role-card-image {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+}
+
 .guide-card-body {
     flex: 1;
     min-width: 0;
@@ -857,12 +875,14 @@ body.dmo-editor-visible .sidebar-footer .editor-wrap {
 
 .guide-detail-image {
     width: 100%;
+    max-width: 320px;
+    max-height: 280px;
     border-radius: 12px;
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     background: var(--card);
     display: block;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: top center;
 }
 
 .guide-detail-article {
@@ -942,6 +962,16 @@ body.dmo-editor-visible .sidebar-footer .editor-wrap {
     border: none;
 }
 
+.guide-article.markdown-body img {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    display: block;
+    margin: 0.5em 0 1em 0;
+}
+
 .guide-article.markdown-body blockquote {
     margin: 1em 0;
     padding-left: 1em;
@@ -968,8 +998,7 @@ body.dmo-editor-visible .sidebar-footer .editor-wrap {
         position: static;
     }
     .guide-detail-image {
-        max-height: 280px;
-        aspect-ratio: 16 / 10;
+        max-height: 220px;
     }
 }
 

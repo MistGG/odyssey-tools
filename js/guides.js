@@ -15,6 +15,7 @@
             categories.forEach(function(cat) { byCategory[cat] = []; });
             items.forEach(function(it, idx) {
                 if ((it.title || '').trim().toUpperCase() === 'WIP') return;
+                if (it.id && String(it.id).indexOf('role-') === 0) return;
                 it._idx = idx;
                 var cat = it.category || 'Other';
                 if (!byCategory[cat]) byCategory[cat] = [];

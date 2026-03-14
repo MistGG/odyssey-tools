@@ -3,6 +3,51 @@
   "categories": ["Roles", "Digimon", "Dungeons"],
   "items": [
     {
+      "id": "role-tank",
+      "category": "Roles",
+      "date": "2026-03-09",
+      "title": "Tank",
+      "excerpt": "Absorb damage and protect the party.",
+      "image": "images/roles/tank.png",
+      "bodyFile": "content/guides/tank.md"
+    },
+    {
+      "id": "role-melee",
+      "category": "Roles",
+      "date": "2026-03-09",
+      "title": "Melee",
+      "excerpt": "Close-range damage dealers.",
+      "image": "images/roles/melee.png",
+      "bodyFile": "content/guides/melee.md"
+    },
+    {
+      "id": "role-ranged",
+      "category": "Roles",
+      "date": "2026-03-09",
+      "title": "Ranged",
+      "excerpt": "Attack from a distance.",
+      "image": "images/roles/ranged.png",
+      "bodyFile": "content/guides/ranged.md"
+    },
+    {
+      "id": "role-support",
+      "category": "Roles",
+      "date": "2026-03-09",
+      "title": "Support",
+      "excerpt": "Heal and buff allies.",
+      "image": "images/roles/support.png",
+      "bodyFile": "content/guides/support.md"
+    },
+    {
+      "id": "role-hybrid",
+      "category": "Roles",
+      "date": "2026-03-09",
+      "title": "Hybrid",
+      "excerpt": "Flex between damage and utility.",
+      "image": "images/roles/hybrid.png",
+      "bodyFile": "content/guides/hybrid.md"
+    },
+    {
       "category": "Roles",
       "date": "2026-03-08",
       "title": "WIP",
